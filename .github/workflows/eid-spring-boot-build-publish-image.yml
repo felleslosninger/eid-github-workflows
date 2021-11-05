@@ -3,9 +3,21 @@ name: eID build/publish Docker image
 on:
   workflow_call:
     inputs:
-      application:
+      image-name:
         required: true
         type: string
+      config-filename-idporten:
+        required: false
+        type: string 
+      config-filename-ansattporten:
+        required: false
+        type: string         
+      config-filename-connect2norway:
+        required: false
+        type: string
+      config-filename-ytelsetest:
+        required: false
+        type: string         
     secrets:
       eid-build-token:
         required: true
@@ -27,7 +39,11 @@ jobs:
   build-image:
       runs-on: ubuntu-latest
       env:
-        APPLICATION:  ${{ inputs.application }}
+        IMAGE-NAME:  ${{ inputs.image-name }}
+        CONFIG-FILENAME-IDPORTEN:  ${{ inputs.config-filename-idporten }}
+        CONFIG-FILENAME-ANSATTPORTEN:  ${{ inputs.config-filename-ansattporten }}
+        CONFIG-FILENAME-CONNECT2NORWAY:  ${{ inputs.config-filename-connect2norway }}
+        CONFIG-FILENAME-YTELSETEST:  ${{ inputs.config-filename-ytelsetest }}        
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> $GITHUB_ENV
@@ -51,12 +67,12 @@ jobs:
                   "password": "${{ secrets.maven-password }}"
               }]
         - name: Build with Maven
-          run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.APPLICATION}}:$IMAGETAG
+          run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:$IMAGETAG
         - name: Container image scan
           uses: Azure/container-scan@v0.1
           with:
             # Docker image to scan
-            image-name: ${{ secrets.registry-url }}/${{env.APPLICATION}}:${{env.IMAGETAG}}
+            image-name: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
             token: ${{ github.token }}
             severity-threshold: HIGH
@@ -67,9 +83,9 @@ jobs:
             username: ${{ secrets.registry-username }}
             password: ${{ secrets.registry-password }}
         - run:
-            docker push ${{ secrets.registry-url }}/${{env.APPLICATION}}:${{env.IMAGETAG}}
+            docker push ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
         - run:
-            echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ secrets.registry-url }}/${{env.APPLICATION}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> $GITHUB_ENV
+            echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> $GITHUB_ENV
         - name: Checkout Allure test scripts
           uses: actions/checkout@v2
           with:
@@ -89,4 +105,4 @@ jobs:
             token: ${{ secrets.eid-build-token }}
             event-type: update-idporten-version
             repository: 'felleslosninger/idporten-cd'
-            client-payload: '{"application": "${{env.APPLICATION}}", "image": "${{secrets.registry-url}}/${{env.APPLICATION}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}"}'
+            client-payload: '{"application": "${{env.IMAGE-NAME}}", "config-filename-idporten": "${{env.CONFIG-FILENAME-IDPORTEN}}", "config-filename-ansattporten": "${{env.CONFIG-FILENAME-ANSATTPORTEN}}", "config-filename-connect2norway": "${{env.CONFIG-FILENAME-CONNECT2NORWAY}}", "config-filename-ytelsetest": "${{env.CONFIG-FILENAME-YTELSETEST}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}"}'
