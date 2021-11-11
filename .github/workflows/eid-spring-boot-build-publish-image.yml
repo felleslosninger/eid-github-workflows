@@ -39,7 +39,7 @@ jobs:
         IMAGE-NAME:  ${{ inputs.image-name }}
       steps:
         - name: Set imagetag as env variable
-          run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> $GITHUB_ENV
+          run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
         - uses: actions/checkout@v2
         - name: Set up JDK 1.11
           uses: actions/setup-java@v1
@@ -80,7 +80,7 @@ jobs:
         - run:
             docker push ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
         - run:
-            echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> $GITHUB_ENV
+            echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> "$GITHUB_ENV"
         - name: Checkout Allure test scripts
           uses: actions/checkout@v2
           with:
