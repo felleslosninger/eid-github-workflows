@@ -25,7 +25,7 @@ on:
 
 
 jobs:
-  build-image:
+  build-and-scan-image:
       runs-on: ubuntu-latest
       env:
         IMAGE-NAME:  ${{ inputs.image-name }}
