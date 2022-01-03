@@ -11,6 +11,7 @@ on:
         description: Image/Container Registery URL
         default: 'my-local-registery'
         required: false
+        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
