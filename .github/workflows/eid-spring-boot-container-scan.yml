@@ -1,0 +1,61 @@
+name: eID container scan
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: Name of Docker image
+        required: true
+        type: string
+    secrets:
+      eid-build-token:
+        description: Token from eid-build
+        required: true
+      maven-user:
+        description: Maven user
+        required: true
+      maven-password:
+        description: Maven password
+        required: true
+      registry-url:
+        description: Image/Container Registery URL
+        default: my-local-registery
+        required: false
+
+jobs:
+  build-image:
+      runs-on: ubuntu-latest
+      env:
+        IMAGE-NAME:  ${{ inputs.image-name }}
+      steps:
+        - name: Set imagetag as env variable
+          run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
+        - uses: actions/checkout@v2
+        - name: Set up JDK 1.11
+          uses: actions/setup-java@v1
+          with:
+            java-version: 1.11
+        - name: Cache Maven packages
+          uses: actions/cache@v2
+          with:
+            path: ~/.m2
+            key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+            restore-keys: ${{ runner.os }}-m2
+        - uses: s4u/maven-settings-action@v2.2.0
+          with:
+            servers: |
+              [{
+                  "id": "github-oidc-sdk",
+                  "username": "${{ secrets.maven-user }}",
+                  "password": "${{ secrets.maven-password }}"
+              }]
+        - name: Build image with Maven/Spring Boot (skipTests)
+          run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG"
+        - name: Container image scan
+          uses: Azure/container-scan@v0.1
+          with:
+            # Docker image to scan
+            image-name: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
+            token: ${{ github.token }}
+            severity-threshold: HIGH
