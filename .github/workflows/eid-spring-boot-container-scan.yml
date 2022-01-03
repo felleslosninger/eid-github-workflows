@@ -7,6 +7,10 @@ on:
         description: Name of Docker image
         required: true
         type: string
+      registry-url:
+        description: Image/Container Registery URL
+        default: 'my-local-registery'
+        required: false
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -17,10 +21,7 @@ on:
       maven-password:
         description: Maven password
         required: true
-      registry-url:
-        description: Image/Container Registery URL
-        default: my-local-registery
-        required: false
+
 
 jobs:
   build-image:
@@ -50,12 +51,12 @@ jobs:
                   "password": "${{ secrets.maven-password }}"
               }]
         - name: Build image with Maven/Spring Boot (skipTests)
-          run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG"
+          run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG"
         - name: Container image scan
           uses: Azure/container-scan@v0.1
           with:
             # Docker image to scan
-            image-name: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            image-name: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
             token: ${{ github.token }}
             severity-threshold: HIGH
