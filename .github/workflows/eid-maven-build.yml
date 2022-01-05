@@ -2,6 +2,12 @@ name: eID build Java code with Maven
 
 on:
   workflow_call:
+    inputs:
+      java-version:
+        description: Main version of java
+        default: '11'
+        required: false
+        type: string
     secrets:
       maven-user:
         description: Maven user
@@ -26,10 +32,11 @@ jobs:
               line-length:
                 max: 150
                 level: warning
-      - name: Set up JDK 1.11
+      - name: Set up JDK ${{ inputs.java-version }}
         uses: actions/setup-java@v1
         with:
-          java-version: 1.11
+          distribution: 'zulu'
+          java-version: ${{ inputs.java-version }}
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
