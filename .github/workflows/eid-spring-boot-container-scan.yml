@@ -66,6 +66,6 @@ jobs:
             image-name: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
             token: ${{ github.token }}
-            trivy-version: 0.22.0
+ #           trivy-version: 0.22.0
             severity-threshold: HIGH
 
