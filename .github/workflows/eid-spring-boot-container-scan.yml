@@ -60,7 +60,7 @@ jobs:
         - name: Build image with Maven/Spring Boot (skipTests)
           run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG"
         - name: Container image scan
-          uses: Azure/container-scan@v0.1
+          uses: Azure/container-scan@master
           with:
             # Docker image to scan
             image-name: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
