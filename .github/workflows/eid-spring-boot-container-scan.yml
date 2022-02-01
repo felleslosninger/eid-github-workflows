@@ -68,4 +68,3 @@ jobs:
             token: ${{ github.token }}
  #           trivy-version: 0.22.0
             severity-threshold: HIGH
-
