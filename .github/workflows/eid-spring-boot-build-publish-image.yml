@@ -12,11 +12,6 @@ on:
         default: '11'
         required: false
         type: string
-      enable-container-scan:
-        description: Switch to temp. disable container-scan if upgrade Trivy problems
-        default: true
-        required: false
-        type: boolean
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -86,7 +81,6 @@ jobs:
         - name: Build image with Maven/Spring Boot
           run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG"
         - name: Container image scan
-          if: ${{ inputs.enable-container-scan }}
           uses: oyri/container-scan@trivy-image-patch
           with:
             # Docker image to scan
