@@ -81,7 +81,7 @@ jobs:
         - name: Build image with Maven/Spring Boot
           run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG"
         - name: Container image scan
-          uses: oyri/container-scan@trivy-image-patch
+          uses: Azure/container-scan@v0
           with:
             # Docker image to scan
             image-name: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
