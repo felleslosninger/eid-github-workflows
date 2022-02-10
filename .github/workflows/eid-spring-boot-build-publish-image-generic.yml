@@ -1,0 +1,127 @@
+name: eID build/publish Docker image 
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: Name of Docker image
+        required: true
+        type: string
+      java-version:
+        description: Main version of java
+        default: '11'
+        required: false
+        type: string
+      kubernetes-repo:
+        description: Repository for kubernetes manifests (idporten-cd | minid-cd)
+        default: 'idporten-cd'
+        required: false
+        type: string
+    secrets:
+      eid-build-token:
+        description: Token from eid-build
+        required: true
+      maven-user:
+        description: Maven user
+        required: true
+      maven-password:
+        description: Maven password
+        required: true
+      registry-url:
+        description: Image/Container Registery URL
+        required: true
+      registry-username:
+        description: Image/Container Registery username
+        required: true
+      registry-password:
+        description: Image/Container Registery password
+        required: true
+      allure-user:
+        description: Allure user for reporting results of unit tests
+        required: true
+      allure-password:
+        description: Allure password for reporting results of unit tests
+        required: true
+jobs:
+  build-image:
+      runs-on: ubuntu-latest
+      env:
+        IMAGE-NAME:  ${{ inputs.image-name }}
+      steps:
+        - name: Set imagetag as env variable
+          run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
+        - uses: actions/checkout@v2
+        - name: yaml-lint
+          uses: ibiqlik/action-yamllint@v3
+          with:
+            file_or_dir: src/main/resources/application*.yml
+            config_data: |
+              extends: default
+              rules:
+                empty-lines: disable
+                line-length:
+                  max: 150
+                  level: warning
+        - name: Set up JDK ${{ inputs.java-version }}
+          uses: actions/setup-java@v2
+          with:
+            distribution: 'liberica'
+            java-version: ${{ inputs.java-version }}
+        - name: Cache Maven packages
+          uses: actions/cache@v2
+          with:
+            path: ~/.m2
+            key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+            restore-keys: ${{ runner.os }}-m2
+        - uses: s4u/maven-settings-action@v2.2.0
+          with:
+            servers: |
+              [{
+                  "id": "github-oidc-sdk",
+                  "username": "${{ secrets.maven-user }}",
+                  "password": "${{ secrets.maven-password }}"
+              }]
+        - name: Maven update version used in application.yaml
+          run: mvn versions:set -B -DnewVersion="$IMAGETAG"
+        - name: Build image with Maven/Spring Boot
+          run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:tiny
+        - name: Container image scan
+          uses: Azure/container-scan@v0
+          with:
+            # Docker image to scan
+            image-name: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
+            token: ${{ github.token }}
+#           trivy-version: 0.22.0
+            severity-threshold: HIGH
+        - name: 'Login Azure docker container registery'
+          uses: azure/docker-login@v1
+          with:
+            login-server: ${{ secrets.registry-url }}
+            username: ${{ secrets.registry-username }}
+            password: ${{ secrets.registry-password }}
+        - name: 'Push image'
+          run:
+            docker push ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+        - run:
+            echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> "$GITHUB_ENV"
+        - name: Checkout Allure test scripts
+          uses: actions/checkout@v2
+          with:
+            repository: felleslosninger/eid-github-actions
+            token: ${{ secrets.eid-build-token }}
+            path: scripts
+        - name: Publish test report to allure server
+          run: bash ./scripts/scripts/allure_test_results.sh
+          env:
+            PROJECT_REPO: ${{ github.event.repository.name }}
+            ALLURE_USER: ${{ secrets.allure-user }}
+            ALLURE_PASSWORD: ${{ secrets.allure-password }}
+            MULTI_MODULE: "false"
+        - name: 'update Kubernetes in ${{ inputs.java-version }}'
+          uses: peter-evans/repository-dispatch@ce5485de42c9b2622d2ed064be479e8ed65e76f4 # pin@v1.1.3
+          with:
+            token: ${{ secrets.eid-build-token }}
+            event-type: update-version
+            repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
+            client-payload: '{"application": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}"}'
