@@ -123,5 +123,5 @@ jobs:
           with:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
-            repository: 'felleslosninger/${{ inputs.java-version }}'
+            repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
             client-payload: '{"application": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}"}'
