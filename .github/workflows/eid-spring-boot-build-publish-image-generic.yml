@@ -43,10 +43,13 @@ on:
         description: Allure password for reporting results of unit tests
         required: true
 jobs:
-  build-image:
+  build-publish-image:
       runs-on: ubuntu-latest
       env:
         IMAGE-NAME:  ${{ inputs.image-name }}
+      outputs:
+        imagetag: ${{ steps.output-image-tag.outputs.imagetag }}
+        imagedigest: ${{ steps.output-image-digest.outputs.imagedigest }}
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
@@ -118,10 +121,7 @@ jobs:
             ALLURE_USER: ${{ secrets.allure-user }}
             ALLURE_PASSWORD: ${{ secrets.allure-password }}
             MULTI_MODULE: "false"
-        - name: 'update Kubernetes in ${{ inputs.java-version }}'
-          uses: peter-evans/repository-dispatch@ce5485de42c9b2622d2ed064be479e8ed65e76f4 # pin@v1.1.3
-          with:
-            token: ${{ secrets.eid-build-token }}
-            event-type: update-version
-            repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
-            client-payload: '{"application": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}"}'
+        - id: output-image-tag
+          run: echo "::set-output name=imagetag::${{env.IMAGETAG}}"
+        - id: output-image-digest
+          run: echo "::set-output name=imagedigest::${{env.IMAGE_DIGEST}}"

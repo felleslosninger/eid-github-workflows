@@ -1,0 +1,42 @@
+name: eID update image version in Kubernetes config
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: Name of Docker image
+        required: true
+        type: string
+      kubernetes-repo:
+        description: Repository for kubernetes manifests (idporten-cd | minid-cd)
+        default: 'idporten-cd'
+        required: false
+        type: string
+      kubernetes-repo-event:
+        description: Name of event to trigger in kubernetes repository
+        default: 'update-version'
+        required: false
+        type: string
+    secrets:
+      eid-build-token:
+        description: Token from eid-build
+        required: true
+      registry-url:
+        description: Image/Container Registery URL
+        required: true
+jobs:
+  update-version:
+    needs: build-publish-image
+    runs-on: ubuntu-latest
+    env:
+      IMAGE-NAME: ${{ inputs.image-name }}
+    steps:
+      - name: Log input parameters from first job
+        run: echo ${{needs.build-publish-image.outputs.imagetag}} - ${{needs.build-publish-image.outputs.imagedigest}} - ${{env.IMAGE-NAME}}
+      - name: 'update Kubernetes for new version of image ${{ inputs.image-name }}'
+        uses: peter-evans/repository-dispatch@ce5485de42c9b2622d2ed064be479e8ed65e76f4 # pin@v1.1.3
+        with:
+          token: ${{ secrets.eid-build-token }}
+          event-type: ${{ inputs.kubernetes-repo-event }}
+          repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
+          client-payload: '{"application": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{needs.build-publish-image.outputs.imagetag}}@${{needs.build-publish-image.outputs.imagedigest}}","version":"${{needs.build-publish-image.outputs.imagetag}}"}'
