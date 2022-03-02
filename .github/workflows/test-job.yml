@@ -1,0 +1,25 @@
+name: eID test job, only log
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: Name of Docker image
+        required: true
+        type: string
+      image-version:
+        description: Docker image version
+        required: true
+        type: string
+    secrets:
+      eid-build-token:
+        description: Token from eid-build
+        required: true
+jobs:
+  log:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE-NAME: ${{ inputs.image-name }}
+    steps:
+      - name: Log input parameters
+        run: echo params - ${{inputs.image-version}} - ${{env.IMAGE-NAME}}
