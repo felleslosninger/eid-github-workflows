@@ -43,12 +43,12 @@ on:
         description: Allure password for reporting results of unit tests
         required: true
     outputs:
-      image-tag:
+      image-version:
         description: "Docker image version"
-        value: ${{ steps.output-image-tag.outputs.imagetag }}
+        value: ${{ jobs.build-publish-image.outputs.imagetag }}
       image-digest:
         description: "Docker image SHA256 digest"
-        value: ${{ steps.output-image-digest.outputs.imagedigest }}
+        value: ${{ jobs.build-publish-image.outputs.imagedigest }}
 jobs:
   build-publish-image:
       runs-on: ubuntu-latest
