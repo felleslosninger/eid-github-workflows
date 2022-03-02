@@ -1,0 +1,41 @@
+name: Testing output of job
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: Name of Docker image
+        required: true
+        type: string
+    secrets:
+      eid-build-token:
+        description: Token from eid-build
+        required: true
+    outputs:
+      image-tag:
+        description: "Docker image version"
+        value: ${{ steps.output-image-tag.outputs.imagetag }}
+jobs:
+  generate-image-version:
+      runs-on: ubuntu-latest
+      env:
+        IMAGE-NAME:  ${{ inputs.image-name }}
+      outputs:
+        imagetag: ${{ steps.output-image-tag.outputs.imagetag }}
+      steps:
+        - name: Set imagetag as env variable
+          run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
+        - uses: actions/checkout@v2
+        - name: yaml-lint
+          uses: ibiqlik/action-yamllint@v3
+          with:
+            file_or_dir: src/main/resources/application*.yml
+            config_data: |
+              extends: default
+              rules:
+                empty-lines: disable
+                line-length:
+                  max: 150
+                  level: warning
+        - id: output-image-tag
+          run: echo "::set-output name=imagetag::${{env.IMAGETAG}}"
