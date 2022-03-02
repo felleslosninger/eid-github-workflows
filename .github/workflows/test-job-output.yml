@@ -14,7 +14,7 @@ on:
     outputs:
       image-tag:
         description: "Docker image version"
-        value: ${{ steps.output-image-tag.outputs.imagetag }}
+        value: ${{ jobs.generate-image-version.outputs.imagetag }}
 jobs:
   generate-image-version:
       runs-on: ubuntu-latest
