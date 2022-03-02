@@ -12,11 +12,6 @@ on:
         default: '11'
         required: false
         type: string
-      kubernetes-repo:
-        description: Repository for kubernetes manifests (idporten-cd | minid-cd)
-        default: 'idporten-cd'
-        required: false
-        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
