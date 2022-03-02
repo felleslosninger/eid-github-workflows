@@ -12,7 +12,7 @@ on:
         description: Token from eid-build
         required: true
     outputs:
-      image-tag:
+      image-version:
         description: "Docker image version"
         value: ${{ jobs.generate-image-version.outputs.imagetag }}
 jobs:
