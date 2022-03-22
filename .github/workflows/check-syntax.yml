@@ -1,4 +1,4 @@
-name: Lint GitHub Actions workflows
+name: Syntax check workflows files (actionlint)
 on: [push]
 
 jobs:
