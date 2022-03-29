@@ -12,6 +12,11 @@ on:
         default: '11'
         required: false
         type: string
+      allure-enabled:
+        description: Allure reports is default enabled
+        default: true
+        required: false
+        type: boolean
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -111,12 +116,14 @@ jobs:
         - run:
             echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> "$GITHUB_ENV"
         - name: Checkout Allure test scripts
+          if: ${{ allure-enabled }}
           uses: actions/checkout@v2
           with:
             repository: felleslosninger/eid-github-actions
             token: ${{ secrets.eid-build-token }}
             path: scripts
         - name: Publish test report to allure server
+          if: ${{ allure-enabled }}
           run: bash ./scripts/scripts/allure_test_results.sh
           env:
             PROJECT_REPO: ${{ github.event.repository.name }}
