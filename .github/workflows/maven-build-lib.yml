@@ -1,0 +1,36 @@
+name: Maven build java
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: Main version of java
+        default: '11'
+        required: false
+        type: string
+    secrets:
+      maven-user:
+        description: Maven user
+        required: true
+      maven-password:
+        description: Maven password
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK ${{ inputs.java-version }}
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'liberica'
+          java-version: ${{ inputs.java-version }}
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build with Maven
+        run: mvn -B test
