@@ -12,6 +12,12 @@ on:
       eid-build-token:
         description: Token from eid-build
         required: true
+      maven-user:
+        description: Maven user
+        required: true
+      maven-password:
+        description: Maven password
+        required: true
 
 jobs:
   build:
@@ -25,6 +31,14 @@ jobs:
         with:
           distribution: 'liberica'
           java-version: ${{ inputs.java-version }}
+      - uses: s4u/maven-settings-action@v2.2.0
+        with:
+          servers: |
+            [{
+            "id": "github-oidc-sdk",
+            "username": "${{ secrets.maven-user }}",
+            "password": "${{ secrets.maven-password }}"
+            }]
       - name: Deploy to Github Package Registry
         env:
           GITHUB_TOKEN: ${{ secrets.eid-build-token }}
