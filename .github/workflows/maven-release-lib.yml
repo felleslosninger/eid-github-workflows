@@ -45,7 +45,7 @@ jobs:
       - name: Deploy to Github Package Registry
         run: |
           mkdir -p ~/.m2
-          echo "<settings><servers><server><id>github</id><username>${{ secrets.packages-user }}</username><password>\${{ secrets.packages-token }}</password></server></servers></settings>" > ~/.m2/settings.xml
+          echo "<settings><servers><server><id>github</id><username>${{ secrets.packages-user }}</username><password>${{ secrets.packages-token }}</password></server></servers></settings>" > ~/.m2/settings.xml
           REPO="github::default::https://maven.pkg.github.com/${GITHUB_REPOSITORY}"
           mvn versions:set -B -DnewVersion="${{ github.event.release.tag_name }}"
           mvn -B deploy -DaltDeploymentRepository="${REPO}"
