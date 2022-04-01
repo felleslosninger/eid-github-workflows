@@ -1,4 +1,4 @@
-name: eID build Java code with Maven
+name: Maven build java
 
 on:
   workflow_call:
@@ -21,17 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: yaml-lint
-        uses: ibiqlik/action-yamllint@v3
-        with:
-          file_or_dir: src/main/resources/application*.y*ml
-          config_data: |
-            extends: default
-            rules:
-              empty-lines: disable
-              line-length:
-                max: 150
-                level: warning
       - name: Set up JDK ${{ inputs.java-version }}
         uses: actions/setup-java@v2
         with:
@@ -47,14 +36,9 @@ jobs:
         with:
           servers: |
             [{
-                "id": "github-oidc-sdk",
-                "username": "${{ secrets.maven-user }}",
-                "password": "${{ secrets.maven-password }}"
-            },
-            {
-                "id": "github",
-                "username": "${{ secrets.maven-user }}",
-                "password": "${{ secrets.maven-password }}"
+            "id": "github",
+            "username": "${{ secrets.maven-user }}",
+            "password": "${{ secrets.maven-password }}"
             }]
       - name: Build with Maven
         run: mvn -B test
