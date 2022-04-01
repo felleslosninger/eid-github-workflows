@@ -50,6 +50,11 @@ jobs:
                 "id": "github-oidc-sdk",
                 "username": "${{ secrets.maven-user }}",
                 "password": "${{ secrets.maven-password }}"
+            },
+            {
+                "id": "github",
+                "username": "${{ secrets.maven-user }}",
+                "password": "${{ secrets.maven-password }}"
             }]
       - name: Build with Maven
         run: mvn -B test
