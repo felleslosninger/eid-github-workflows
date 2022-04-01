@@ -56,6 +56,11 @@ jobs:
                   "id": "github-oidc-sdk",
                   "username": "${{ secrets.maven-user }}",
                   "password": "${{ secrets.maven-password }}"
+              },
+              {
+                "id": "github",
+                "username": "${{ secrets.maven-user }}",
+                "password": "${{ secrets.maven-password }}"
               }]
         - name: Build image with Maven/Spring Boot (skipTests)
           run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:tiny

@@ -75,6 +75,11 @@ jobs:
                   "id": "github-oidc-sdk",
                   "username": "${{ secrets.maven-user }}",
                   "password": "${{ secrets.maven-password }}"
+              },
+              {
+                "id": "github",
+                "username": "${{ secrets.maven-user }}",
+                "password": "${{ secrets.maven-password }}"
               }]
         - name: Maven update version used in application.yaml
           run: mvn versions:set -B -DnewVersion="$IMAGETAG"
