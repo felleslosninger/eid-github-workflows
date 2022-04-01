@@ -38,7 +38,7 @@ jobs:
         with:
           servers: |
             [{
-            "id": "github-packages",
+            "id": "github",
             "username": "${{ secrets.maven-user }}",
             "password": "${{ secrets.maven-password }}"
             }]

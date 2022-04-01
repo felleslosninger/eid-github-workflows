@@ -36,7 +36,7 @@ jobs:
         with:
           servers: |
             [{
-            "id": "github-oidc-sdk",
+            "id": "github",
             "username": "${{ secrets.maven-user }}",
             "password": "${{ secrets.maven-password }}"
             }]
