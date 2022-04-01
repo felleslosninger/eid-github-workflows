@@ -9,8 +9,11 @@ on:
         required: false
         type: string
     secrets:
-      eid-build-token:
-        description: Token from eid-build
+      packages-user:
+        description: Github packages user
+        required: true
+      packages-token:
+        description: Github packages user token
         required: true
       maven-user:
         description: Maven user
@@ -35,16 +38,14 @@ jobs:
         with:
           servers: |
             [{
-            "id": "github-oidc-sdk",
+            "id": "github-packages",
             "username": "${{ secrets.maven-user }}",
             "password": "${{ secrets.maven-password }}"
             }]
       - name: Deploy to Github Package Registry
-        env:
-          GITHUB_TOKEN: ${{ secrets.eid-build-token }}
         run: |
           mkdir -p ~/.m2
-          echo "<settings><servers><server><id>github</id><username>eid-build</username><password>\${env.GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
+          echo "<settings><servers><server><id>github</id><username>${{ secrets.packages-user }}</username><password>\${{ secrets.packages-token }}</password></server></servers></settings>" > ~/.m2/settings.xml
           REPO="github::default::https://maven.pkg.github.com/${GITHUB_REPOSITORY}"
           mvn versions:set -B -DnewVersion="${{ github.event.release.tag_name }}"
           mvn -B deploy -DaltDeploymentRepository="${REPO}"
