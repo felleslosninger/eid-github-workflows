@@ -41,7 +41,7 @@ jobs:
       - name: Log input parameters
         run: echo ${{inputs.image-version}} - ${{inputs.image-digest}} - ${{env.IMAGE-NAME}}
       - name: 'update Kubernetes for new version of image ${{ inputs.image-name }}'
-        uses: peter-evans/repository-dispatch@11ba7d3f32dc7cc919d1c43f1fec1c05260c26b5 # pin@v1.1.3
+        uses: peter-evans/repository-dispatch@11ba7d3f32dc7cc919d1c43f1fec1c05260c26b5 # pin@v2
         with:
           token: ${{ secrets.eid-build-token }}
           event-type: ${{ inputs.kubernetes-repo-event }}
