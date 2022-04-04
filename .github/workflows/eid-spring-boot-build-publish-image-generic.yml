@@ -60,7 +60,7 @@ jobs:
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v3
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
           with:
@@ -122,7 +122,7 @@ jobs:
             echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> "$GITHUB_ENV"
         - name: Checkout Allure test scripts
           if: ${{ inputs.allure-enabled }}
-          uses: actions/checkout@v2
+          uses: actions/checkout@v3
           with:
             repository: felleslosninger/eid-github-actions
             token: ${{ secrets.eid-build-token }}
