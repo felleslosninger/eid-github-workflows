@@ -1,0 +1,36 @@
+name: eID update Kustomize base
+
+on:
+  workflow_call:
+    inputs:
+      base-version:
+        description: Kustomize base version
+        required: true
+        type: string
+      kubernetes-repo:
+        description: Repository for kubernetes manifests (idporten-cd | minid-cd)
+        default: 'idporten-cd'
+        required: false
+        type: string
+      kubernetes-repo-event:
+        description: Name of event to trigger in kubernetes repository
+        default: 'update-base'
+        required: false
+        type: string
+    secrets:
+      eid-build-token:
+        description: Token from eid-build
+        required: true
+jobs:
+  update-base:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log input parameters
+        run: echo ${{inputs.base-version}} - ${{ inputs.kubernetes-repo }}
+      - name: 'update Kustomize base in ${{ inputs.kubernetes-repo }}'
+        uses: peter-evans/repository-dispatch@11ba7d3f32dc7cc919d1c43f1fec1c05260c26b5 # pin@v2
+        with:
+          token: ${{ secrets.eid-build-token }}
+          event-type: ${{ inputs.kubernetes-repo-event }}
+          repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
+          client-payload: '{"base-version": "${{inputs.base-version}}"}'
