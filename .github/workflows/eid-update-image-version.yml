@@ -25,6 +25,11 @@ on:
         default: 'update-version'
         required: false
         type: string
+      kustomize-overlay:
+        description: Kustomize overlay to use for image update
+        default: 'latest'
+        required: false
+        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -46,4 +51,4 @@ jobs:
           token: ${{ secrets.eid-build-token }}
           event-type: ${{ inputs.kubernetes-repo-event }}
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
-          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}"}'
+          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","kustomize-overlay":"${{inputs.kustomize-overlay}}"}'
