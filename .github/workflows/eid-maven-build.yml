@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: Slashgear/action-check-pr-title@2.0.0
+      - uses: Slashgear/action-check-pr-title@v3.0.0
         with:
           regex: '^/(id|pf|mp|minid|aos)-(\d)+(.+)/i'
       - name: yaml-lint
