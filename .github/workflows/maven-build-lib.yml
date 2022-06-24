@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: Slashgear/action-check-pr-title@v3.0.0
         with:
-          regex: '^/(id|pf|mp|minid|aos)-(\d)+(.+)/i'
+          regexp: '^/(id|pf|mp|minid|aos)-(\d)+(.+)/i'
       - name: Set up JDK ${{ inputs.java-version }}
         uses: actions/setup-java@v3
         with:
