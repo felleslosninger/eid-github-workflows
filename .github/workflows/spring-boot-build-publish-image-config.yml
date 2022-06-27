@@ -1,4 +1,4 @@
-name: eID build/publish Docker image 
+name: Build/publish Docker image and update Kubernetes config
 
 on:
   workflow_call:
@@ -12,11 +12,11 @@ on:
         default: '11'
         required: false
         type: string
-      allure-enabled:
-        description: Allure reports is default enabled
-        default: true
+      kustomize-overlay:
+        description: Kustomize overlay to use for image update
+        default: 'latest'
         required: false
-        type: boolean
+        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -42,21 +42,11 @@ on:
       allure-password:
         description: Allure password for reporting results of unit tests
         required: true
-    outputs:
-      image-version:
-        description: "Docker image version"
-        value: ${{ jobs.build-publish-image.outputs.imagetag }}
-      image-digest:
-        description: "Docker image SHA256 digest"
-        value: ${{ jobs.build-publish-image.outputs.imagedigest }}
 jobs:
-  build-publish-image:
+  build-image:
       runs-on: ubuntu-latest
       env:
         IMAGE-NAME:  ${{ inputs.image-name }}
-      outputs:
-        imagetag: ${{ steps.output-image-tag.outputs.imagetag }}
-        imagedigest: ${{ steps.output-image-digest.outputs.imagedigest }}
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
@@ -121,21 +111,22 @@ jobs:
         - run:
             echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> "$GITHUB_ENV"
         - name: Checkout Allure test scripts
-          if: ${{ inputs.allure-enabled }}
           uses: actions/checkout@v3
           with:
             repository: felleslosninger/eid-github-actions
             token: ${{ secrets.eid-build-token }}
             path: scripts
         - name: Publish test report to allure server
-          if: ${{ inputs.allure-enabled }}
           run: bash ./scripts/scripts/allure_test_results.sh
           env:
             PROJECT_REPO: ${{ github.event.repository.name }}
             ALLURE_USER: ${{ secrets.allure-user }}
             ALLURE_PASSWORD: ${{ secrets.allure-password }}
             MULTI_MODULE: "false"
-        - id: output-image-tag
-          run: echo "::set-output name=imagetag::${{env.IMAGETAG}}"
-        - id: output-image-digest
-          run: echo "::set-output name=imagedigest::${{env.IMAGE_DIGEST}}"
+        - name: 'update Kubernetes for new version of image ${{ inputs.image-name }}'
+          uses: peter-evans/repository-dispatch@11ba7d3f32dc7cc919d1c43f1fec1c05260c26b5 # pin@v2
+          with:
+            token: ${{ secrets.eid-build-token }}
+            event-type: update-version
+            repository: 'felleslosninger/idporten-cd'
+            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","kustomize-overlay":"${{inputs.kustomize-overlay}}"}'
