@@ -1,4 +1,4 @@
-name: eID build Java code with Maven
+name: Maven build java
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: eID update image version in Kubernetes config
+name: New image version in Kubernetes config
 
 on:
   workflow_call:

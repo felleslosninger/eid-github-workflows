@@ -1,4 +1,4 @@
-name: eID container scan
+name: Container scan
 
 on:
   workflow_call:
