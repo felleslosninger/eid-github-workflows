@@ -1,4 +1,4 @@
-name: Build/publish Docker image
+name: Build/publish Docker image and update Kubernetes config
 
 on:
   workflow_call:
