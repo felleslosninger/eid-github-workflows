@@ -123,10 +123,18 @@ jobs:
             ALLURE_USER: ${{ secrets.allure-user }}
             ALLURE_PASSWORD: ${{ secrets.allure-password }}
             MULTI_MODULE: "false"
+        - uses: actions-ecosystem/action-regex-match@v2
+          id: regex-find-jira-id
+          with:
+            text: ${{ github.event.head_commit.message }}
+            regex: '^([a-zA-Z]{2,6}-[\d]+)(.+)'
+        - id: output-jira-id
+          if: ${{ steps.regex-find-jira-id.outputs.match != '' }}
+          run: echo "JIRA_ID=${{ steps.regex-find-jira-id.outputs.group1 }}" >> "$GITHUB_ENV"
         - name: 'update Kubernetes for new version of image ${{ inputs.image-name }}'
           uses: peter-evans/repository-dispatch@11ba7d3f32dc7cc919d1c43f1fec1c05260c26b5 # pin@v2
           with:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
             repository: 'felleslosninger/idporten-cd'
-            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","kustomize-overlay":"${{inputs.kustomize-overlay}}"}'
+            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","jira-id":"${{env.JIRA_ID}}","pusher":"${{ github.event.pusher.name }}"}'
