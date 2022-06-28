@@ -58,7 +58,7 @@ jobs:
         uses: shioyang/check-pr-labels-on-push-action@v1.0.4
         with:
           github-token: ${{ secrets.eid-build-token }}
-          labels: '{["dependencies"]}'
+          labels: '["dependencies"]'
       - name: Check PR label for manual-deploy
         id: check_manual_deploy
         uses: shioyang/check-pr-labels-on-push-action@v1.0.4
