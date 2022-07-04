@@ -154,7 +154,7 @@ jobs:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
             repository: 'felleslosninger/idporten-cd'
-            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":" ${{ steps.check_manual_deploy.outputs.result }}","jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}"}'
+            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}"}'
         - name: 'update Kubernetes for new version of image ${{ inputs.image-name }}'
           if: ${{steps.check_dependabot.outputs.result == 'false'}}
           uses: peter-evans/repository-dispatch@11ba7d3f32dc7cc919d1c43f1fec1c05260c26b5 # pin@v2
@@ -162,4 +162,4 @@ jobs:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
             repository: 'felleslosninger/idporten-cd'
-            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":" ${{ steps.check_manual_deploy.outputs.result }}","jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }}}'
+            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }}}'
