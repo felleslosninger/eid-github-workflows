@@ -34,6 +34,7 @@ jobs:
       runs-on: ubuntu-latest
       env:
         IMAGE-NAME:  ${{ inputs.image-name }}
+        DOCKLE_HOST: "unix:///var/run/docker.sock"
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
@@ -64,12 +65,12 @@ jobs:
               }]
         - name: Build image with Maven/Spring Boot (skipTests)
           run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:tiny
-        - name: Vulnerabilties scan image
+        - name: Container scan for vulnerabilties
           uses: Azure/container-scan@v0
           with:
             # Docker image to scan
             image-name: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
             token: ${{ github.token }}
-            trivy-version: 0.22.0
+#            trivy-version: 0.22.0
             severity-threshold: HIGH
