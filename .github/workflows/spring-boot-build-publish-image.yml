@@ -54,6 +54,7 @@ jobs:
       runs-on: ubuntu-latest
       env:
         IMAGE-NAME:  ${{ inputs.image-name }}
+        DOCKLE_HOST: "unix:///var/run/docker.sock"
       outputs:
         imagetag: ${{ steps.output-image-tag.outputs.imagetag }}
         imagedigest: ${{ steps.output-image-digest.outputs.imagedigest }}

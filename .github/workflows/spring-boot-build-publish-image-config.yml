@@ -47,6 +47,7 @@ jobs:
       runs-on: ubuntu-latest
       env:
         IMAGE-NAME:  ${{ inputs.image-name }}
+        DOCKLE_HOST: "unix:///var/run/docker.sock"
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
