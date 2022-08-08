@@ -18,6 +18,7 @@ on:
 
 jobs:
   verify-pull-request-title:
+    if: ${{ github.event_name == 'pull_request'}}
     runs-on: ubuntu-latest
     steps:
       - uses: deepakputhraya/action-pr-title@v1.0.2
