@@ -1,5 +1,5 @@
 # Github Action workflows for eID-group pipeline
-![Build Status](https://github.com/felleslosninger/eid-github-workflows/actions/workflows/check-syntax.yml)
+[![Build Status](https://github.com/felleslosninger/eid-github-workflows/actions/workflows/check-syntax.yml/badge.svg)](https://github.com/felleslosninger/eid-github-workflows/actions/workflows/check-syntax.yml)
 
 Shared github workflows libraries adapted to eID applications and libraries.
 
