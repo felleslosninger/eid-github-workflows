@@ -1,5 +1,5 @@
 # How to configure Java library
-Create folder .github/workflows/ folder in your repo.
+Create folder `.github/workflows/` folder in your repo.
 Add workflow files as described in the following sections.
 
 ## Build branch when pull request created
@@ -22,6 +22,8 @@ jobs:
       maven-user: ${{ secrets.MAVEN_USER }}
       maven-password: ${{ secrets.MAVEN_PASSWORD }}
 ```
+For more details see description in workflow [maven-build-lib.yml](../.github/workflows/maven-build-lib.yml).
+
 
 ## Build maven artifacts when release created manually
 Create file `.github/workflows/call-release.yml` with content as below.
@@ -45,3 +47,5 @@ jobs:
       maven-user: ${{ secrets.MAVEN_USER }}
       maven-password: ${{ secrets.MAVEN_PASSWORD }}
 ```
+For more details see description in workflow [maven-release-lib.yml](../.github/workflows/maven-release-lib.yml).
+

@@ -2,6 +2,8 @@
 Create folder `.github/workflows/` folder in your repo.
 Add workflow files as described in the following sections.
 
+secrets.REGISTRY_URL in `felleslosninger` organization referes to Azure Container Registery in digdirnrl-tenant.
+
 ## Build branch when pull request created
 This workflow runs maven tests.
 We also do container-scan in this step to detect vulnerabilities early before merge to main.
@@ -33,6 +35,8 @@ jobs:
       maven-password: ${{ secrets.MAVEN_PASSWORD }}
     
 ```
+For more details see description in workflow [maven-build.yml](../.github/workflows/maven-build.yml) and [spring-boot-container-scan.yml](../.github/workflows/spring-boot-container-scan.yml).
+
 
 ## Build and publish image to ACR and update kubernetes configuration with new image version
 
@@ -76,7 +80,7 @@ jobs:
       eid-build-token: ${{ secrets.EID_BUILD_PAT }}
       registry-url: ${{ secrets.REGISTRY_URL }}
 ```
-For more details see description in workflow [spring-boot-build-publish-image.yml](.github/workflows/spring-boot-build-publish-image.yml) and [update-image-version.yml](.github/workflows/update-image-version.yml).
+For more details see description in workflow [spring-boot-build-publish-image.yml](../.github/workflows/spring-boot-build-publish-image.yml) and [update-image-version.yml](../.github/workflows/update-image-version.yml).
 ## Deprecated: Both build/publish image and update kubernetes repo idporten-cd in same workflow
 This is the old way with no possiblity to configure allure or kubernetes-configuration repository.
 Adapted to idporten-cd.
