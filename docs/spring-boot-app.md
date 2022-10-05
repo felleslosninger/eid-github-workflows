@@ -2,7 +2,7 @@
 Create folder `.github/workflows/` folder in your repo.
 Add workflow files as described in the following sections.
 
-secrets.REGISTRY_URL in `felleslosninger` organization referes to Azure Container Registery in digdirnrl-tenant.
+secrets.REGISTRY_URL in `felleslosninger` organization referes to Azure Container Registery (ACR) in digdirnrl-tenant.
 
 ## Build branch when pull request created
 This workflow runs maven tests.
