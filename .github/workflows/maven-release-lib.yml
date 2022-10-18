@@ -34,7 +34,7 @@ jobs:
         with:
           distribution: 'liberica'
           java-version: ${{ inputs.java-version }}
-      - uses: s4u/maven-settings-action@v2.6.0
+      - uses: s4u/maven-settings-action@v2.7.0
         with:
           servers: |
             [{
