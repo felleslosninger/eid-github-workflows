@@ -65,6 +65,9 @@ jobs:
               }]
         - name: Build image with Maven/Spring Boot (skipTests)
           run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:tiny
+        - uses: anchore/sbom-action@v0
+          with:
+            image: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
         - name: Container scan for vulnerabilties
           uses: Azure/container-scan@v0
           with:
