@@ -49,3 +49,6 @@ jobs:
           REPO="github::default::https://maven.pkg.github.com/${GITHUB_REPOSITORY}"
           mvn versions:set -B -DnewVersion="${{ github.event.release.tag_name }}"
           mvn -B deploy -DaltDeploymentRepository="${REPO}"
+      - uses: anchore/sbom-action@v0
+        with:
+          path: ./target/
