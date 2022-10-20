@@ -103,7 +103,7 @@ jobs:
         - uses: anchore/sbom-action@v0
           with:
             image: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
-            artifact-name: ${{env.IMAGE-NAME}}-sbom.spdx
+            artifact-name: ${{env.IMAGE-NAME}}-${{env.IMAGETAG}}-sbom.spdx
         - name: 'Login Azure docker container registery'
           uses: azure/docker-login@v1
           with:
