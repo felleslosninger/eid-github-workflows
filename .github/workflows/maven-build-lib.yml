@@ -53,4 +53,7 @@ jobs:
             "password": "${{ secrets.maven-password }}"
             }]
       - name: Build with Maven
-        run: mvn -B test
+        run: mvn -B package
+      - uses: anchore/sbom-action@v0
+        with:
+          path: ./target/

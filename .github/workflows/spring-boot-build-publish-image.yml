@@ -115,6 +115,9 @@ jobs:
             token: ${{ github.token }}
 #           trivy-version: 0.22.0
             severity-threshold: HIGH
+        - uses: anchore/sbom-action@v0
+          with:
+            image: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
         - name: 'Login Azure docker container registery'
           uses: azure/docker-login@v1
           with:
