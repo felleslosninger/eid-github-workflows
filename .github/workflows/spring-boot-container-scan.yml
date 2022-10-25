@@ -68,7 +68,7 @@ jobs:
         - uses: anchore/sbom-action@v0
           with:
             image: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
-            artifact-name: ${{env.IMAGE-NAME}}-${{env.IMAGETAG}}-sbom.spdx
+            artifact-name: sbom-${{env.IMAGETAG}}.spdx
         - name: Container scan for vulnerabilties
           uses: Azure/container-scan@v0
           with:
