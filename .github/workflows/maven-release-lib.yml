@@ -8,6 +8,11 @@ on:
         default: '11'
         required: false
         type: string
+      sbom-path:
+        description: Target directory for SBOM generation
+        default: ./target/
+        required: false
+        type: string
     secrets:
       packages-user:
         description: Github packages user
@@ -51,4 +56,4 @@ jobs:
           mvn -B deploy -DaltDeploymentRepository="${REPO}"
       - uses: anchore/sbom-action@v0
         with:
-          path: ./target/
+          path: ${{ inputs.sbom-path }}

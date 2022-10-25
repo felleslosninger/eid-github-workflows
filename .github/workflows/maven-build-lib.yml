@@ -8,6 +8,11 @@ on:
         default: '11'
         required: false
         type: string
+      sbom-path:
+        description: Target directory for SBOM generation
+        default: ./target/
+        required: false
+        type: string
     secrets:
       maven-user:
         description: Maven user
@@ -56,4 +61,4 @@ jobs:
         run: mvn -B package
       - uses: anchore/sbom-action@v0
         with:
-          path: ./target/
+          path: ${{ inputs.sbom-path }}
