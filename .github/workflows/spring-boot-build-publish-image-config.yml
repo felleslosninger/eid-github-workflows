@@ -104,7 +104,7 @@ jobs:
           id: sbom-name
           run: |
             SBOM_NAME=$(echo ${{env.IMAGE-NAME}} | tr '/' '-')
-            echo "SBOM_ARTIFACT_ID=$SBOM_NAME" >> $GITHUB_OUTPUT
+            echo "SBOM_ARTIFACT_ID=$SBOM_NAME" >> "$GITHUB_OUTPUT"
         - uses: anchore/sbom-action@v0
           with:
             image: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
