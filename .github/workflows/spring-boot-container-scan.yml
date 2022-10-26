@@ -65,10 +65,15 @@ jobs:
               }]
         - name: Build image with Maven/Spring Boot (skipTests)
           run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:tiny
+        - name: Create SBOM artifact-name
+          id: sbom-name
+          run: |
+            SBOM_NAME=$(echo ${{env.IMAGE-NAME}} | tr '/' '-')
+            echo "SBOM_ARTIFACT_ID=$SBOM_NAME" >> "$GITHUB_OUTPUT"
         - uses: anchore/sbom-action@v0
           with:
             image: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
-            artifact-name: sbom-${{env.IMAGETAG}}.spdx
+            artifact-name: sbom-${{steps.sbom-name.outputs.SBOM_ARTIFACT_ID}}-${{env.IMAGETAG}}.spdx
         - name: Container scan for vulnerabilties
           uses: Azure/container-scan@v0
           with:
