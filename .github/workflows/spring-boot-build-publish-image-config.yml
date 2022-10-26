@@ -100,10 +100,15 @@ jobs:
             token: ${{ github.token }}
 #           trivy-version: 0.22.0
             severity-threshold: HIGH
+        - name: Create SBOM artifact-name
+          id: sbom-name
+          run: |
+            SBOM_NAME=$(echo ${{env.IMAGE-NAME}} | tr '/' '-')
+            echo "SBOM_ARTIFACT_ID=$SBOM_NAME" >> $GITHUB_OUTPUT
         - uses: anchore/sbom-action@v0
           with:
             image: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
-            artifact-name: sbom-${{env.IMAGETAG}}.spdx
+            artifact-name: sbom-${{steps.sbom-name.outputs.SBOM_ARTIFACT_ID}}-${{env.IMAGETAG}}.spdx
         - name: 'Login Azure docker container registery'
           uses: azure/docker-login@v1
           with:
