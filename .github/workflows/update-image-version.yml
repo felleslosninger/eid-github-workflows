@@ -68,6 +68,11 @@ jobs:
       - id: output-dependabot
         if: ${{ steps.regex-find-jira-id.outputs.match == '' && steps.check_dependabot.outputs.result == 'true'}}
         run: echo "JIRA_ID=Dependabot" >> "$GITHUB_ENV"
+      - name: Get PR labels
+        id: pr-labels
+        uses: ruben-baez-mojix-com/git-labels@v0.0.4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: 'update Kubernetes for new version of image ${{ inputs.image-name }} (Dependabot)'
         if: ${{steps.check_dependabot.outputs.result == 'true'}}
         uses: peter-evans/repository-dispatch@f2696244ec00ed5c659a5cc77f7138ad0302dffb # pin@v2
@@ -75,7 +80,7 @@ jobs:
           token: ${{ secrets.eid-build-token }}
           event-type: ${{ inputs.kubernetes-repo-event }}
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
-          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}"}'
+          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}", "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}} }'
       - name: 'update Kubernetes for new version of image ${{ inputs.image-name }}'
         if: ${{ steps.check_dependabot.outputs.result == 'false'}}
         uses: peter-evans/repository-dispatch@f2696244ec00ed5c659a5cc77f7138ad0302dffb # pin@v2
@@ -83,4 +88,4 @@ jobs:
           token: ${{ secrets.eid-build-token }}
           event-type: ${{ inputs.kubernetes-repo-event }}
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
-          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }}}'
+          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }}, "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}} }'
