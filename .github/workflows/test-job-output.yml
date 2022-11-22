@@ -38,4 +38,4 @@ jobs:
                   max: 150
                   level: warning
         - id: output-image-tag
-          run: echo "IMAGETAG::${{env.IMAGE-TAG}}" >> $GITHUB_OUTPUT
+          run: echo "IMAGETAG::${{env.IMAGE-TAG}}" >> "$GITHUB_OUTPUT"
