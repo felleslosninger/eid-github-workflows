@@ -21,7 +21,7 @@ jobs:
       env:
         IMAGE-NAME:  ${{ inputs.image-name }}
       outputs:
-        imagetag: ${{ steps.output-image-tag.outputs.imagetag }}
+        imagetag: ${{ steps.output-image-tag.outputs.IMAGE-TAG }}
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
@@ -38,4 +38,4 @@ jobs:
                   max: 150
                   level: warning
         - id: output-image-tag
-          run: echo "::set-output name=imagetag::${{env.IMAGETAG}}"
+          run: echo "IMAGETAG::${{env.IMAGE-TAG}}" >> "$GITHUB_OUTPUT"

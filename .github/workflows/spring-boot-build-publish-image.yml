@@ -151,6 +151,6 @@ jobs:
             ALLURE_PASSWORD: ${{ secrets.allure-password }}
             MULTI_MODULE: "false"
         - id: output-image-tag
-          run: echo "::set-output name=imagetag::${{env.IMAGETAG}}"
+          run: echo "imagetag=${{env.IMAGETAG}}" >> "$GITHUB_OUTPUT"
         - id: output-image-digest
-          run: echo "::set-output name=imagedigest::${{env.IMAGE_DIGEST}}"
+          run: echo "imagedigest=${{env.IMAGE_DIGEST}}" >> "$GITHUB_OUTPUT"
