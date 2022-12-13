@@ -27,10 +27,10 @@ on:
         required: true
       allure-user:
         description: Allure user for reporting results of unit tests
-        required: ${{ inputs.allure-enabled }}
+        required: false
       allure-password:
         description: Allure password for reporting results of unit tests
-        required: ${{ inputs.allure-enabled }}
+        required: false
 jobs:
   verify-pull-request-title:
     if: ${{ github.event_name == 'pull_request'}}
