@@ -19,6 +19,9 @@ on:
         required: false
         type: boolean
     secrets:
+      eid-build-token:
+        description: Token from eid-build
+        required: false
       maven-user:
         description: Maven user
         required: true
