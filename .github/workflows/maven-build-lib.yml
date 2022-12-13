@@ -14,8 +14,8 @@ on:
         required: false
         type: string
       allure-enabled:
-        description: Allure reports is default enabled
-        default: true
+        description: Allure reports is default disabled
+        default: false
         required: false
         type: boolean
     secrets:
