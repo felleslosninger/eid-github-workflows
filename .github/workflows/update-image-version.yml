@@ -55,13 +55,13 @@ jobs:
         run: echo "JIRA_ID=${{ steps.regex-find-jira-id.outputs.group1 }}" >> "$GITHUB_ENV"
       - name: Check PR label for dependabot
         id: check_dependabot
-        uses: shioyang/check-pr-labels-on-push-action@v1.0.6
+        uses: shioyang/check-pr-labels-on-push-action@v1.0.9
         with:
           github-token: ${{ secrets.eid-build-token }}
           labels: '["dependencies"]'
       - name: Check PR label for manual-deploy
         id: check_manual_deploy
-        uses: shioyang/check-pr-labels-on-push-action@v1.0.6
+        uses: shioyang/check-pr-labels-on-push-action@v1.0.9
         with:
           github-token: ${{ secrets.eid-build-token }}
           labels: '["manual-deploy"]'
