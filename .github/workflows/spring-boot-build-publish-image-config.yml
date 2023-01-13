@@ -20,7 +20,6 @@ on:
       container-scan-enabled:
         description: Container-scan is default enabled, disable this with caution since vulnerabilities might enter production without scan
         default: false
-        required: true
         type: boolean
     secrets:
       eid-build-token:
