@@ -24,7 +24,7 @@ on:
         type: boolean
       container-scan-enabled:
         description: Container-scan is default enabled, disable this with caution since vulnerabilities might enter production without scan
-        default: true
+        default: false
         required: true
         type: boolean
     secrets:
