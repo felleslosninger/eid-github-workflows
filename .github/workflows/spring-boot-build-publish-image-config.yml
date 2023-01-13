@@ -19,7 +19,7 @@ on:
         type: string
       container-scan-enabled:
         description: Container-scan is default enabled, disable this with caution since vulnerabilities might enter production without scan
-        default: false
+        default: true
         type: boolean
     secrets:
       eid-build-token:
@@ -52,6 +52,8 @@ jobs:
       env:
         IMAGE-NAME: ${{ inputs.image-name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
+        #TRIVY_TIMEOUT: <tid>
+        TRIVY_OFFLINE_SCAN: true
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"

@@ -24,7 +24,7 @@ on:
         type: boolean
       container-scan-enabled:
         description: Container-scan is default enabled, disable this with caution since vulnerabilities might enter production without scan
-        default: false
+        default: true
         type: boolean
     secrets:
       eid-build-token:
@@ -64,6 +64,8 @@ jobs:
       env:
         IMAGE-NAME:  ${{ inputs.image-name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
+        #TRIVY_TIMEOUT: <tid>
+        TRIVY_OFFLINE_SCAN: true
       outputs:
         imagetag: ${{ steps.output-image-tag.outputs.imagetag }}
         imagedigest: ${{ steps.output-image-digest.outputs.imagedigest }}
