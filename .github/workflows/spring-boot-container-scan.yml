@@ -35,53 +35,53 @@ jobs:
       env:
         IMAGE-NAME:  ${{ inputs.image-name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
+        #TRIVY_TIMEOUT: "15m"
+        TRIVY_OFFLINE_SCAN: true
       steps:
-        - name: disabled
-          run: echo "THIS JOB IS DISABLED FOR NOW!"
-#        - name: Set imagetag as env variable
-#          run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
-#        - uses: actions/checkout@v3
-#        - name: Set up JDK ${{ inputs.java-version }}
-#          uses: actions/setup-java@v3
-#          with:
-#            distribution: 'liberica'
-#            java-version: ${{ inputs.java-version }}
-#        - name: Cache Maven packages
-#          uses: actions/cache@v3.0.11
-#          with:
-#            path: ~/.m2
-#            key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-#            restore-keys: ${{ runner.os }}-m2
-#        - uses: s4u/maven-settings-action@v2.8.0
-#          with:
-#            servers: |
-#              [{
-#                  "id": "github-oidc-sdk",
-#                  "username": "${{ secrets.maven-user }}",
-#                  "password": "${{ secrets.maven-password }}"
-#              },
-#              {
-#                "id": "github",
-#                "username": "${{ secrets.maven-user }}",
-#                "password": "${{ secrets.maven-password }}"
-#              }]
-#        - name: Build image with Maven/Spring Boot (skipTests)
-#          run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:tiny
-#        - name: Create SBOM artifact-name
-#          id: sbom-name
-#          run: |
-#            SBOM_NAME=$(echo ${{env.IMAGE-NAME}} | tr '/' '-')
-#            echo "SBOM_ARTIFACT_ID=$SBOM_NAME" >> "$GITHUB_OUTPUT"
-#        - uses: anchore/sbom-action@v0
-#          with:
-#            image: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
-#            artifact-name: sbom-${{steps.sbom-name.outputs.SBOM_ARTIFACT_ID}}-${{env.IMAGETAG}}.spdx
-#        - name: Container scan for vulnerabilties
-#          uses: Azure/container-scan@v0
-#          with:
-#            # Docker image to scan
-#            image-name: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
-#            # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
-#            token: ${{ github.token }}
-#            # trivy-version: 0.36.0
-#            severity-threshold: HIGH
+        - name: Set imagetag as env variable
+          run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
+        - uses: actions/checkout@v3
+        - name: Set up JDK ${{ inputs.java-version }}
+          uses: actions/setup-java@v3
+          with:
+            distribution: 'liberica'
+            java-version: ${{ inputs.java-version }}
+        - name: Cache Maven packages
+          uses: actions/cache@v3.0.11
+          with:
+            path: ~/.m2
+            key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+            restore-keys: ${{ runner.os }}-m2
+        - uses: s4u/maven-settings-action@v2.8.0
+          with:
+            servers: |
+              [{
+                  "id": "github-oidc-sdk",
+                  "username": "${{ secrets.maven-user }}",
+                  "password": "${{ secrets.maven-password }}"
+              },
+              {
+                "id": "github",
+                "username": "${{ secrets.maven-user }}",
+                "password": "${{ secrets.maven-password }}"
+              }]
+        - name: Build image with Maven/Spring Boot (skipTests)
+          run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:tiny
+        - name: Create SBOM artifact-name
+          id: sbom-name
+          run: |
+            SBOM_NAME=$(echo ${{env.IMAGE-NAME}} | tr '/' '-')
+            echo "SBOM_ARTIFACT_ID=$SBOM_NAME" >> "$GITHUB_OUTPUT"
+        - uses: anchore/sbom-action@v0
+          with:
+            image: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            artifact-name: sbom-${{steps.sbom-name.outputs.SBOM_ARTIFACT_ID}}-${{env.IMAGETAG}}.spdx
+        - name: Container scan for vulnerabilties
+          uses: Azure/container-scan@v0
+          with:
+            # Docker image to scan
+            image-name: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
+            token: ${{ github.token }}
+            # trivy-version: 0.36.0
+            severity-threshold: HIGH
