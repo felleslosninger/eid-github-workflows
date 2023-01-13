@@ -36,6 +36,8 @@ jobs:
         IMAGE-NAME:  ${{ inputs.image-name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
       steps:
+#        - name: disabled
+#          run: echo "THIS JOB IS DISABLED FOR NOW!"
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
         - uses: actions/checkout@v3
@@ -81,5 +83,5 @@ jobs:
             image-name: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
             token: ${{ github.token }}
-#            trivy-version: 0.22.0
+            trivy-version: 0.36.0
             severity-threshold: HIGH
