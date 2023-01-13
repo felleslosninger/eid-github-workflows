@@ -22,6 +22,11 @@ on:
         default: true
         required: false
         type: boolean
+      container-scan-enabled:
+        description: Container-scan is default enabled, disable this with caution since vulnerabilities might enter production without scan
+        default: true
+        required: true
+        type: boolean
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -107,6 +112,7 @@ jobs:
         - name: Build image with Maven/Spring Boot
           run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:${{ inputs.image-pack }}
         - name: Container image scan
+          if: ${{ inputs.container-scan-enabled }}
           uses: Azure/container-scan@v0
           with:
             # Docker image to scan
