@@ -25,3 +25,6 @@ See [how to configure](docs/java-library.md) for more details and examples for J
 ## Syntax check of the action in this repository
 See [check-syntax.yml](.github/workflows/check-syntax.yml) for details. Only for internal use in current repository.
 
+## Container scan
+Uses Trivy https://github.com/aquasecurity/trivy through action [Azure/container-scan](https://github.com/Azure/container-scan). Will soon be replaced by Trivy action directly.
+You can test container scan locally by download trivy and run `trivy image <my-image:latest>`.
