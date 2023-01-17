@@ -17,6 +17,10 @@ on:
         default: '11'
         required: false
         type: string
+      container-scan-offline-mode:
+        description: Container-scan is default download updated CVE definitions via Trivy, enable offline on download problems
+        default: false
+        type: boolean
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -36,7 +40,7 @@ jobs:
         IMAGE-NAME:  ${{ inputs.image-name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
         #TRIVY_TIMEOUT: "15m"
-        TRIVY_OFFLINE_SCAN: true
+        TRIVY_OFFLINE_SCAN: ${{ inputs.container-scan-offline-mode }}
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
