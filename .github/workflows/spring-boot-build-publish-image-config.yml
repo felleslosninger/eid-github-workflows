@@ -170,7 +170,7 @@ jobs:
           run: echo "JIRA_ID=Dependabot" >> "$GITHUB_ENV"
         - name: 'update Kubernetes for new version of image ${{ inputs.image-name }} (Dependabot)'
           if: ${{steps.check_dependabot.outputs.result == 'true'}}
-          uses: peter-evans/repository-dispatch@f2696244ec00ed5c659a5cc77f7138ad0302dffb # pin@v2
+          uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # pin@v2
           with:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
@@ -178,7 +178,7 @@ jobs:
             client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}", "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}} }'
         - name: 'update Kubernetes for new version of image ${{ inputs.image-name }}'
           if: ${{steps.check_dependabot.outputs.result == 'false'}}
-          uses: peter-evans/repository-dispatch@f2696244ec00ed5c659a5cc77f7138ad0302dffb # pin@v2
+          uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # pin@v2
           with:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
