@@ -17,6 +17,10 @@ on:
         default: 'latest'
         required: false
         type: string
+      container-scan-enabled:
+        description: Container-scan is default enabled, disable this with caution since vulnerabilities might enter production without scan
+        default: true
+        type: boolean
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -48,6 +52,8 @@ jobs:
       env:
         IMAGE-NAME: ${{ inputs.image-name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
+        #TRIVY_TIMEOUT: "15m"
+        TRIVY_OFFLINE_SCAN: true
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
@@ -92,6 +98,7 @@ jobs:
         - name: Build image with Maven/Spring Boot
           run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:tiny
         - name: Container image scan
+          if: ${{ inputs.container-scan-enabled }}
           uses: Azure/container-scan@v0
           with:
             # Docker image to scan
@@ -143,13 +150,13 @@ jobs:
           run: echo "JIRA_ID=${{ steps.regex-find-jira-id.outputs.group1 }}" >> "$GITHUB_ENV"
         - name: Check PR label for dependabot
           id: check_dependabot
-          uses: shioyang/check-pr-labels-on-push-action@v1.0.6
+          uses: shioyang/check-pr-labels-on-push-action@v1.0.9
           with:
             github-token: ${{ secrets.eid-build-token }}
             labels: '["dependencies"]'
         - name: Check PR label for manual-deploy
           id: check_manual_deploy
-          uses: shioyang/check-pr-labels-on-push-action@v1.0.6
+          uses: shioyang/check-pr-labels-on-push-action@v1.0.9
           with:
             github-token: ${{ secrets.eid-build-token }}
             labels: '["manual-deploy"]'
