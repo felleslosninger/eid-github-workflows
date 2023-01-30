@@ -46,8 +46,8 @@ jobs:
         run: echo ${{inputs.image-version}} - ${{inputs.image-digest}} - ${{env.IMAGE-NAME}}
       - name: Set image and application name
         run: |
-             echo "IMAGE-NAME=${{ inputs.image-name || env.repository-name }}" >> "$GITHUB_ENV"
-             echo "APPLICATION-NAME=${{ inputs.application-name || env.repository-name  }}" >> "$GITHUB_ENV"
+             echo "IMAGE-NAME=${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
+             echo "APPLICATION-NAME=${{ inputs.application-name || env.REPOSITORY-NAME  }}" >> "$GITHUB_ENV"
       - uses: actions-ecosystem/action-regex-match@v2
         id: regex-find-jira-id
         with:

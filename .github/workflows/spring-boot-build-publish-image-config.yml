@@ -58,8 +58,8 @@ jobs:
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
         - name: Set image and application name
           run: |
-             echo "IMAGE-NAME=${{ inputs.image-name || env.repository-name }}" >> "$GITHUB_ENV"
-             echo "APPLICATION-NAME=${{ inputs.application-name || env.repository-name  }}" >> "$GITHUB_ENV"
+             echo "IMAGE-NAME=${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
+             echo "APPLICATION-NAME=${{ inputs.application-name || env.REPOSITORY-NAME  }}" >> "$GITHUB_ENV"
         - uses: actions/checkout@v3
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
