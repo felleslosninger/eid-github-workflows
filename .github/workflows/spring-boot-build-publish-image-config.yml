@@ -5,11 +5,11 @@ on:
     inputs:
       application-name:
         description: Name of application
-        required: false # true after migration
+        required: false
         type: string
       image-name:
         description: Name of Docker image
-        required: true
+        required: false
         type: string
       java-version:
         description: Main version of java
@@ -49,13 +49,17 @@ jobs:
   build-image:
       runs-on: ubuntu-latest
       env:
-        IMAGE-NAME: ${{ inputs.image-name }}
+        REPOSITORY-NAME: ${{ github.event.repository.name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
         #TRIVY_TIMEOUT: "15m"
         TRIVY_OFFLINE_SCAN: true
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
+        - name: Set image and application name
+          run: |
+             echo "IMAGE-NAME=${{ inputs.image-name || env.repository-name }}" >> "$GITHUB_ENV"
+             echo "APPLICATION-NAME=${{ inputs.application-name || env.repository-name  }}" >> "$GITHUB_ENV"
         - uses: actions/checkout@v3
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
