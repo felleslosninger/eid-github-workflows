@@ -3,18 +3,17 @@ name: Build/publish Docker image and update Kubernetes config
 on:
   workflow_call:
     inputs:
+      application-name:
+        description: Name of application
+        required: false
+        type: string
       image-name:
         description: Name of Docker image
-        required: true
+        required: false
         type: string
       java-version:
         description: Main version of java
         default: '11'
-        required: false
-        type: string
-      kustomize-overlay:
-        description: Kustomize overlay to use for image update
-        default: 'latest'
         required: false
         type: string
       container-scan-enabled:
@@ -50,13 +49,17 @@ jobs:
   build-image:
       runs-on: ubuntu-latest
       env:
-        IMAGE-NAME: ${{ inputs.image-name }}
+        REPOSITORY-NAME: ${{ github.event.repository.name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
         #TRIVY_TIMEOUT: "15m"
         TRIVY_OFFLINE_SCAN: true
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
+        - name: Set image and application name
+          run: |
+             echo "IMAGE-NAME=${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
+             echo "APPLICATION-NAME=${{ inputs.application-name || env.REPOSITORY-NAME  }}" >> "$GITHUB_ENV"
         - uses: actions/checkout@v3
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
@@ -175,7 +178,7 @@ jobs:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
             repository: 'felleslosninger/idporten-cd'
-            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}", "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}} }'
+            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}", "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}} }'
         - name: 'update Kubernetes for new version of image ${{ inputs.image-name }}'
           if: ${{steps.check_dependabot.outputs.result == 'false'}}
           uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # pin@v2
@@ -183,4 +186,4 @@ jobs:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
             repository: 'felleslosninger/idporten-cd'
-            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","kustomize-overlay":"${{inputs.kustomize-overlay}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }}, "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}} }'
+            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }}, "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}} }'
