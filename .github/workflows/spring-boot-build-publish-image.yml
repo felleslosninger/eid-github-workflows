@@ -5,7 +5,7 @@ on:
     inputs:
       image-name:
         description: Name of Docker image
-        required: true
+        required: false
         type: string
       image-pack:
         description: Docker image pack of tiny, base or full
@@ -62,7 +62,7 @@ jobs:
   build-publish-image:
       runs-on: ubuntu-latest
       env:
-        IMAGE-NAME:  ${{ inputs.image-name }}
+        REPOSITORY-NAME: ${{ github.event.repository.name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
         #TRIVY_TIMEOUT: "15m"
         TRIVY_OFFLINE_SCAN: ${{ inputs.container-scan-offline-mode }}
@@ -72,6 +72,9 @@ jobs:
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
+        - name: Set IMAGE-NAME env variable
+          run: |
+             echo "IMAGE-NAME=${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
         - uses: actions/checkout@v3
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
