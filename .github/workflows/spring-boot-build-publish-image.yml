@@ -22,9 +22,9 @@ on:
         default: true
         required: false
         type: boolean
-      container-scan-enabled:
-        description: Container-scan is default enabled, disable this with caution since vulnerabilities might enter production without scan
-        default: true
+      container-scan-offline-mode:
+        description: Container-scan is default download updated CVE definitions via Trivy, enable offline on download problems
+        default: false
         type: boolean
     secrets:
       eid-build-token:
@@ -65,7 +65,7 @@ jobs:
         REPOSITORY-NAME: ${{ github.event.repository.name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
         #TRIVY_TIMEOUT: "15m"
-        TRIVY_OFFLINE_SCAN: true
+        TRIVY_OFFLINE_SCAN: ${{ inputs.container-scan-offline-mode }}
       outputs:
         imagetag: ${{ steps.output-image-tag.outputs.imagetag }}
         imagedigest: ${{ steps.output-image-digest.outputs.imagedigest }}
@@ -116,7 +116,6 @@ jobs:
         - name: Build image with Maven/Spring Boot
           run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:${{ inputs.image-pack }}
         - name: Container image scan
-          if: ${{ inputs.container-scan-enabled }}
           uses: Azure/container-scan@v0
           with:
             # Docker image to scan
