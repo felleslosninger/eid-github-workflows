@@ -29,6 +29,11 @@ on:
         default: 'update-version'
         required: false
         type: string
+      kustomize-overlay:
+        description: Kustomize overlay to use for image update
+        default: 'latest'
+        required: false
+        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -83,7 +88,7 @@ jobs:
           token: ${{ secrets.eid-build-token }}
           event-type: ${{ inputs.kubernetes-repo-event }}
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
-          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","application-name":"${{env.APPLICATION-NAME}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}", "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}} }'
+          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","application-name":"${{env.APPLICATION-NAME}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}", "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}}, "kustomize-overlay":"${{inputs.kustomize-overlay}}" }'
       - name: 'update Kubernetes for new version of image ${{ inputs.image-name }}'
         if: ${{ steps.check_dependabot.outputs.result == 'false'}}
         uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # pin@v2
@@ -91,4 +96,4 @@ jobs:
           token: ${{ secrets.eid-build-token }}
           event-type: ${{ inputs.kubernetes-repo-event }}
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
-          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","application-name":"${{env.APPLICATION-NAME}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }}, "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}} }'
+          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "registry-url": "${{secrets.registry-url}}", "image": "${{secrets.registry-url}}/${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","application-name":"${{env.APPLICATION-NAME}}","manual-deploy":${{ steps.check_manual_deploy.outputs.result }},"jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }}, "pr-labels":${{toJSON(steps.pr-labels.outputs.result)}}, "kustomize-overlay":"${{inputs.kustomize-overlay}}" }'
