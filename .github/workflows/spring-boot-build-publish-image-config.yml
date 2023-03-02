@@ -41,10 +41,10 @@ on:
         required: true
       allure-user:
         description: Allure user for reporting results of unit tests
-        required: true
+        required: false
       allure-password:
         description: Allure password for reporting results of unit tests
-        required: true
+        required: false
 jobs:
   build-image:
       runs-on: ubuntu-latest
@@ -129,19 +129,6 @@ jobs:
             docker push ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
         - run:
             echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> "$GITHUB_ENV"
-        - name: Checkout Allure test scripts
-          uses: actions/checkout@v3
-          with:
-            repository: felleslosninger/eid-github-actions
-            token: ${{ secrets.eid-build-token }}
-            path: scripts
-        - name: Publish test report to allure server
-          run: bash ./scripts/scripts/allure_test_results.sh
-          env:
-            PROJECT_REPO: ${{ github.event.repository.name }}
-            ALLURE_USER: ${{ secrets.allure-user }}
-            ALLURE_PASSWORD: ${{ secrets.allure-password }}
-            MULTI_MODULE: "false"
         - uses: actions-ecosystem/action-regex-match@v2
           id: regex-find-jira-id
           with:
