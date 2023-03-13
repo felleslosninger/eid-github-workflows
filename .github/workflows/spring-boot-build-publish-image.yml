@@ -74,7 +74,7 @@ jobs:
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
         - name: Set IMAGE-NAME env variable
           run: |
-             echo "IMAGE-NAME=${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
+             echo "IMAGE-NAME=${{ secrets.registry-url }}/${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
         - uses: actions/checkout@v3
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
@@ -114,12 +114,12 @@ jobs:
         - name: Maven update version used in application.yaml
           run: mvn versions:set -B -DnewVersion="$IMAGETAG"
         - name: Build image with Maven/Spring Boot
-          run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:${{ inputs.image-pack }}
+          run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:${{ inputs.image-pack }}
         - name: Container image scan
           uses: Azure/container-scan@v0
           with:
             # Docker image to scan
-            image-name: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            image-name: ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
             token: ${{ github.token }}
 #           trivy-version: 0.22.0
@@ -131,7 +131,7 @@ jobs:
             echo "SBOM_ARTIFACT_ID=$SBOM_NAME" >> "$GITHUB_OUTPUT"
         - uses: anchore/sbom-action@v0
           with:
-            image: ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            image: ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             artifact-name: sbom-${{steps.sbom-name.outputs.SBOM_ARTIFACT_ID}}-${{env.IMAGETAG}}.spdx
         - name: 'Login Azure docker container registery'
           uses: azure/docker-login@v1
@@ -141,9 +141,9 @@ jobs:
             password: ${{ secrets.registry-password }}
         - name: 'Push image'
           run:
-            docker push ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            docker push ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
         - run:
-            echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ secrets.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> "$GITHUB_ENV"
+            echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> "$GITHUB_ENV"
         - id: output-image-tag
           run: echo "imagetag=${{env.IMAGETAG}}" >> "$GITHUB_OUTPUT"
         - id: output-image-digest
