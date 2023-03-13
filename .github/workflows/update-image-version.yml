@@ -70,11 +70,13 @@ jobs:
       - run: |
             echo "PR_LABELS=${{ join(fromJSON(steps.get_labels.outputs.data)[0].labels.*.name) }}" >> "$GITHUB_ENV"
             echo "PR_NUMBER=${{ fromJson(steps.get_labels.outputs.data)[0].number }}" >> "$GITHUB_ENV"
+      - id: check_dependabot
+        run: echo "DEPENDABOT=${{ contains(env.PR_LABELS, 'dependabot') }}" >> "$GITHUB_ENV"
       - id: output-dependabot
         if: ${{ steps.regex-find-jira-id.outputs.match == '' && steps.check_dependabot.outputs.result == 'true'}}
         run: echo "JIRA_ID=Dependabot" >> "$GITHUB_ENV"
       - name: 'update Kubernetes for new version of image ${{env.IMAGE-NAME}} (Dependabot)'
-        if: ${{steps.check_dependabot.outputs.result == 'true'}}
+        if: ${{ env.DEPENDABOT }}
         uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # pin@v2
         with:
           token: ${{ secrets.eid-build-token }}
@@ -82,7 +84,7 @@ jobs:
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
           client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "image": "${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}",  "pr-number":"${{ env.PR_NUMBER }}", "pr-labels":"${{ env.PR_LABELS }}", "sha":"${{ github.sha }}" }'
       - name: 'update Kubernetes for new version of image ${{env.IMAGE-NAME}}'
-        if: ${{steps.check_dependabot.outputs.result == 'false'}}
+        if: ${{ env.DEPENDABOT == 'false' }}
         uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # pin@v2
         with:
           token: ${{ secrets.eid-build-token }}
