@@ -73,7 +73,7 @@ jobs:
       - id: check_dependabot
         run: echo "DEPENDABOT=${{ contains(env.PR_LABELS, 'dependabot') }}" >> "$GITHUB_ENV"
       - id: output-dependabot
-        if: ${{ steps.regex-find-jira-id.outputs.match == '' && steps.check_dependabot.outputs.result == 'true'}}
+        if: ${{ steps.regex-find-jira-id.outputs.match == '' && env.DEPENDABOT }}
         run: echo "JIRA_ID=Dependabot" >> "$GITHUB_ENV"
       - name: 'update Kubernetes for new version of image ${{env.IMAGE-NAME}} (Dependabot)'
         if: ${{ env.DEPENDABOT }}
