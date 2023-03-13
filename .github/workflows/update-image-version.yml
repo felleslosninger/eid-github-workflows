@@ -88,4 +88,4 @@ jobs:
           token: ${{ secrets.eid-build-token }}
           event-type: ${{ inputs.kubernetes-repo-event }}
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
-          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "image": "${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","author":"${{ toJSON(github.event.head_commit.author) }}", "pr-number":"${{ fromJson(steps.get_issues.outputs.data)[0].number }}", "pr-labels":"${{ join(fromJSON(steps.get_issues.outputs.data)[0].labels.*.name) }}", "sha":"${{ github.sha }}" }'
+          client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "image": "${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","author":"${{ toJSON(github.event.head_commit.author) }}", "pr-number":"${{ env.PR_NUMBER }}", "pr-labels":"${{ env.PR_LABELS }}", "sha":"${{ github.sha }}" }'

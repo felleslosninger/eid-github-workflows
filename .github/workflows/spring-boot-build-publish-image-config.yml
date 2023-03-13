@@ -156,7 +156,7 @@ jobs:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
             repository: 'felleslosninger/idporten-cd'
-            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "image": "${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}",  "pr-number":"${{ env.PR_NUMBER }}", "pr-labels":"${{ env.PR_LABELS }}", "sha":"${{ github.sha }}" }'
+            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "image": "${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}", "pr-number":"${{ env.PR_NUMBER }}", "pr-labels":"${{ env.PR_LABELS }}", "sha":"${{ github.sha }}" }'
         - name: 'update Kubernetes for new version of image ${{env.IMAGE-NAME}}'
           if: ${{steps.check_dependabot.outputs.result == 'false'}}
           uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # pin@v2
@@ -164,4 +164,4 @@ jobs:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
             repository: 'felleslosninger/idporten-cd'
-            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "image": "${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","author":"${{ toJSON(github.event.head_commit.author) }}", "pr-number":"${{ fromJson(steps.get_issues.outputs.data)[0].number }}", "pr-labels":"${{ join(fromJSON(steps.get_issues.outputs.data)[0].labels.*.name) }}", "sha":"${{ github.sha }}" }'
+            client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "image": "${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","author":"${{ toJSON(github.event.head_commit.author) }}", "pr-number":"${{ env.PR_NUMBER }}", "pr-labels":"${{ env.PR_LABELS }}", "sha":"${{ github.sha }}" }'
