@@ -160,7 +160,6 @@ jobs:
             repository: 'felleslosninger/idporten-cd'
             client-payload: '{"image-name": "${{env.IMAGE-NAME}}", "image": "${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}", "pr-number":"${{ env.PR_NUMBER }}", "pr-labels":"${{ env.PR_LABELS }}", "sha":"${{ github.sha }}", "repository":"${{ github.repository }}" }'
         - name: 'update Kubernetes for new version of image ${{env.IMAGE-NAME}}'
-          if: ${{ env.DEPENDABOT == 'false' }}
           uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # pin@v2
           with:
             token: ${{ secrets.eid-build-token }}
