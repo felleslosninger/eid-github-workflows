@@ -29,11 +29,6 @@ on:
         default: 'update-version'
         required: false
         type: string
-      kustomize-overlay:
-        description: Kustomize overlay to use for image update
-        default: 'latest'
-        required: false
-        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
