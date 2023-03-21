@@ -157,7 +157,7 @@ jobs:
           with:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
-            repository: 'felleslosninger/plattform-test-cd'
+            repository: 'felleslosninger/idporten-cd'
             client-payload: '{"image-name": "${{env.IMAGE-NAME}}","image": "${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}","pr-number":"${{ env.PR_NUMBER }}","pr-labels":"${{ env.PR_LABELS }}","sha":"${{ github.sha }}","repository":"${{ github.repository }}" }'
         - name: 'update Kubernetes for new version of image ${{env.IMAGE-NAME}}'
           if: ${{ env.DEPENDABOT == 'false' }}
@@ -165,5 +165,5 @@ jobs:
           with:
             token: ${{ secrets.eid-build-token }}
             event-type: update-version
-            repository: 'felleslosninger/plattform-test-cd'
+            repository: 'felleslosninger/idporten-cd'
             client-payload: '{"image-name": "${{env.IMAGE-NAME}}","image": "${{env.IMAGE-NAME}}:${{env.IMAGETAG}}@${{env.IMAGE_DIGEST}}","version":"${{env.IMAGETAG}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }},"pr-number":"${{ env.PR_NUMBER }}","pr-labels":"${{ env.PR_LABELS }}","sha":"${{ github.sha }}","repository":"${{ github.repository }}" }'
