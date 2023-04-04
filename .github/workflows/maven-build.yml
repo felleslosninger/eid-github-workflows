@@ -44,8 +44,11 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: print m2-settings-before
+        run: cat ~/.m2/settings.xml
       - uses: s4u/maven-settings-action@v2.8.0
         with:
+          githubServer: false
           servers: |
             [{
                 "id": "github-oidc-sdk",
@@ -57,7 +60,7 @@ jobs:
                 "username": "${{ secrets.maven-user }}",
                 "password": "${{ secrets.maven-password }}"
             }]
-      - name: print m2-settings
+      - name: print m2-settings-after
         run: cat ~/.m2/settings.xml
       - name: Build with Maven
         run: mvn clean install -P !e2e -T 1C -DskipTests -B
