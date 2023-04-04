@@ -3,6 +3,10 @@ name: Build/publish Docker image
 on:
   workflow_call:
     inputs:
+      pom-path:
+        description: relative to pom.xml
+        required: false
+        type: string
       image-name:
         description: Name of Docker image
         required: false
@@ -114,7 +118,7 @@ jobs:
         - name: Maven update version used in application.yaml
           run: mvn versions:set -B -DnewVersion="$IMAGETAG"
         - name: Build image with Maven/Spring Boot
-          run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:${{ inputs.image-pack }}
+          run: mvn -B spring-boot:build-image --file ${{ inputs.pom-path }}/pom.xml -Dspring-boot.build-image.imageName=${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:${{ inputs.image-pack }}
         - name: Container image scan
           uses: Azure/container-scan@v0
           with:
