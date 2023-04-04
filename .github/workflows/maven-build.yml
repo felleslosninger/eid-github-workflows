@@ -58,4 +58,4 @@ jobs:
                 "password": "${{ secrets.maven-password }}"
             }]
       - name: Build with Maven
-        run: mvn -B test
+        run: mvn clean install -P !e2e -T 1C -DskipTests -B

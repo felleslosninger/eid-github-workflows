@@ -152,3 +152,10 @@ jobs:
           run: echo "imagetag=${{env.IMAGETAG}}" >> "$GITHUB_OUTPUT"
         - id: output-image-digest
           run: echo "imagedigest=${{env.IMAGE_DIGEST}}" >> "$GITHUB_OUTPUT"
+
+
+
+Warning:  
+Warning:  Some problems were encountered while building the effective settings
+Warning:  'servers.server.id' must be unique but found duplicate server with id github @ /home/runner/.m2/settings.xml
+Warning:  
