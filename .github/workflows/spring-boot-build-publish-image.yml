@@ -8,8 +8,8 @@ on:
         required: false
         type: string
       image-pack:
-        description: Docker image pack of tiny, base or full
-        default: tiny
+        description: Docker image pack of builder:tiny, builder:base or builder:full
+        default: builder:tiny
         required: false
         type: string
       java-version:
@@ -114,7 +114,7 @@ jobs:
         - name: Maven update version used in application.yaml
           run: mvn versions:set -B -DnewVersion="$IMAGETAG"
         - name: Build image with Maven/Spring Boot
-          run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder:${{ inputs.image-pack }}
+          run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/${{ inputs.image-pack }}
         - name: Container image scan
           uses: Azure/container-scan@v0
           with:
