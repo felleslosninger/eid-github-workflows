@@ -8,8 +8,8 @@ on:
         required: false
         type: string
       image-pack:
-        description: Docker image pack of builder:tiny, builder:base or builder:full
-        default: builder:tiny
+        description: Docker image pack of builder-jammy-tiny, builder-jammy-tiny or builder-jammy-tiny
+        default: builder-jammy-tiny
         required: false
         type: string
       java-version:
