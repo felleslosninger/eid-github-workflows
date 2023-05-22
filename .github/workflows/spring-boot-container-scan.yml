@@ -80,12 +80,9 @@ jobs:
           with:
             image: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             artifact-name: sbom-${{steps.sbom-name.outputs.SBOM_ARTIFACT_ID}}-${{env.IMAGETAG}}.spdx
-        - name: Container scan for vulnerabilties
-          uses: Azure/container-scan@v0
+        - name: Run Trivy vulnerability scanner
+          uses: aquasecurity/trivy-action@e5f43133f6e8736992c9f3c1b3296e24b37e17f2 # pin@v0.10.0
           with:
-            # Docker image to scan
-            image-name: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
-            # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
-            token: ${{ github.token }}
-            # trivy-version: 0.36.0
-            severity-threshold: HIGH
+            image-ref: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            exit-code: '1'
+            severity: 'CRITICAL,HIGH'
