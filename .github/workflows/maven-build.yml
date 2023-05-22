@@ -24,7 +24,7 @@ jobs:
       - uses: deepakputhraya/action-pr-title@v1.0.2
         with:
           regex: '(\w)+(\s\w)*' # Regex the title should match.
-          allowed_prefixes: 'Bump,ID-,MIN-,PBLEID-,MP-,KRR-,PF-,AOS-' # title should start with the given prefix
+          allowed_prefixes: 'Bump,ID-,MIN-,PBLEID-,MP-,KRR-,PF-,AOS-,SP-' # title should start with the given prefix
           prefix_case_sensitive: false # title prefix are case insensitive
           min_length: 10 # Min length of the title
           max_length: 100 # Max length of the title
