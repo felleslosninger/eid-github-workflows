@@ -5,7 +5,12 @@ on:
     inputs:
       image-name:
         description: Name of Docker image
-        required: true
+        required: false
+        type: string
+      image-pack:
+        description: Docker image pack of builder-jammy-tiny, builder-jammy-base or builder-jammy-full
+        default: builder-jammy-tiny
+        required: false
         type: string
       registry-url:
         description: Image/Container Registery URL
@@ -37,13 +42,16 @@ jobs:
   build-and-scan-image:
       runs-on: ubuntu-latest
       env:
-        IMAGE-NAME:  ${{ inputs.image-name }}
+        REPOSITORY-NAME: ${{ github.event.repository.name }}
         DOCKLE_HOST: "unix:///var/run/docker.sock"
         #TRIVY_TIMEOUT: "15m"
         TRIVY_OFFLINE_SCAN: ${{ inputs.container-scan-offline-mode }}
       steps:
         - name: Set imagetag as env variable
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
+        - name: Set IMAGE-NAME env variable
+          run: |
+             echo "IMAGE-NAME=${{ inputs.registry-url }}/${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
         - uses: actions/checkout@v3
         - name: Set up JDK ${{ inputs.java-version }}
           uses: actions/setup-java@v3
@@ -70,7 +78,7 @@ jobs:
                 "password": "${{ secrets.maven-password }}"
               }]
         - name: Build image with Maven/Spring Boot (skipTests)
-          run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:"$IMAGETAG" -Dspring-boot.build-image.builder=paketobuildpacks/builder-jammy-tiny
+          run: mvn -DskipTests -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{env.IMAGE-NAME}}:${{env.IMAGETAG}} -Dspring-boot.build-image.builder=paketobuildpacks/${{ inputs.image-pack }}
         - name: Create SBOM artifact-name
           id: sbom-name
           run: |
@@ -78,11 +86,11 @@ jobs:
             echo "SBOM_ARTIFACT_ID=$SBOM_NAME" >> "$GITHUB_OUTPUT"
         - uses: anchore/sbom-action@v0
           with:
-            image: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            image: ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             artifact-name: sbom-${{steps.sbom-name.outputs.SBOM_ARTIFACT_ID}}-${{env.IMAGETAG}}.spdx
         - name: Run Trivy vulnerability scanner
           uses: aquasecurity/trivy-action@e5f43133f6e8736992c9f3c1b3296e24b37e17f2 # pin@v0.10.0
           with:
-            image-ref: ${{ inputs.registry-url }}/${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            image-ref: ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             exit-code: '1'
             severity: 'CRITICAL,HIGH'
