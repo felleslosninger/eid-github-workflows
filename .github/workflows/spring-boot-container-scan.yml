@@ -51,7 +51,7 @@ jobs:
           run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
         - name: Set IMAGE-NAME env variable
           run: |
-             echo "IMAGE-NAME=${{ secrets.registry-url }}/${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
+             echo "IMAGE-NAME=${{ inputs.registry-url }}/${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
         - uses: actions/checkout@v3
         - name: Set up JDK ${{ inputs.java-version }}
           uses: actions/setup-java@v3
