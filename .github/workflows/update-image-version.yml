@@ -48,13 +48,13 @@ jobs:
         run: |
              echo "IMAGE-NAME=${{ secrets.registry-url }}/${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
              echo "APPLICATION-NAME=${{ inputs.application-name || env.REPOSITORY-NAME  }}" >> "$GITHUB_ENV"
-      - uses: actions-ecosystem/action-regex-match@v2
+      - name: Find jira-id
         id: regex-find-jira-id
-        with:
-          text: ${{ github.event.head_commit.message }}
-          regex: '^([a-zA-Z]{2,6}-[\d]+)(.+)'
+        run: |
+             JIRAID=$(echo ${{ github.event.head_commit.message }} | egrep -o '(^[a-zA-Z]{2,6}-[0-9]+)')
+             echo "::set-output name=JIRAID::$JIRAID"
       - id: output-jira-id
-        if: ${{ steps.regex-find-jira-id.outputs.match != '' }}
+        if: ${{ steps.regex-find-jira-id.outputs.JIRAID != '' }}
         run: echo "JIRA_ID=${{ steps.regex-find-jira-id.outputs.group1 }}" >> "$GITHUB_ENV"
       - uses: octokit/request-action@v2.x
         id: get_labels
