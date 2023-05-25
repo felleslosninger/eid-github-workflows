@@ -51,11 +51,12 @@ jobs:
       - name: Find jira-id
         id: regex-find-jira-id
         run: |
-             JIRAID=$(echo ${{ github.event.head_commit.message }} | egrep -o '(^[a-zA-Z]{2,6}-[0-9]+)')
-             echo "::set-output name=JIRAID::$JIRAID"
+            JIID=$(echo '${{ github.event.head_commit.message }}' | 
+            sed -E 's/^([a-zA-Z]{2,6}\-[0-9]+).+/\1/')
+            echo "JIRAID=$JIID" >> "$GITHUB_OUTPUT"
       - id: output-jira-id
         if: ${{ steps.regex-find-jira-id.outputs.JIRAID != '' }}
-        run: echo "JIRA_ID=${{ steps.regex-find-jira-id.outputs.group1 }}" >> "$GITHUB_ENV"
+        run: echo "JIRA_ID=${{ steps.regex-find-jira-id.outputs.JIRAID }}" >> "$GITHUB_ENV"
       - uses: octokit/request-action@v2.x
         id: get_labels
         with:
