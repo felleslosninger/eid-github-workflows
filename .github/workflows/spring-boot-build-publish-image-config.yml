@@ -133,8 +133,10 @@ jobs:
             echo "IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}|cut -d '@' -f 2|cut -d ']' -f 1)" >> "$GITHUB_ENV"
         - name: Find jira-id
           id: regex-find-jira-id
+          env:
+            GIT_MSG: ${{ github.event.head_commit.message }}
           run: |
-              JIID=$(echo '${{ github.event.head_commit.message }}' | 
+              JIID=$(echo "$GIT_MSG" | 
               sed -E 's/^([a-zA-Z]{2,6}\-[0-9]+).+/\1/')
               echo "JIRAID=$JIID" >> "$GITHUB_OUTPUT"
         - id: output-jira-id
