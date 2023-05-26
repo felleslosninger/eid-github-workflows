@@ -50,8 +50,10 @@ jobs:
              echo "APPLICATION-NAME=${{ inputs.application-name || env.REPOSITORY-NAME  }}" >> "$GITHUB_ENV"
       - name: Find jira-id
         id: regex-find-jira-id
+        env:
+          GIT_MSG: ${{ github.event.head_commit.message }}
         run: |
-            JIID=$(echo '${{ github.event.head_commit.message }}' | 
+            JIID=$(echo "$GIT_MSG" | 
             sed -E 's/^([a-zA-Z]{2,6}\-[0-9]+).+/\1/')
             echo "JIRAID=$JIID" >> "$GITHUB_OUTPUT"
       - id: output-jira-id
