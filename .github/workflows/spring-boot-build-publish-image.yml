@@ -29,7 +29,7 @@ on:
     secrets:
       eid-build-token:
         description: Token from eid-build
-        required: true
+        required: false
       maven-user:
         description: Maven user
         required: true
