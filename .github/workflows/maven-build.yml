@@ -62,6 +62,7 @@ jobs:
               ALLOWED_PREFIXES.length &&
               !ALLOWED_PREFIXES.some((prefix) => validateTitlePrefix(title, prefix))
             ) {
+              core.warning("randi her: ${ALLOWED_PREFIXES.length");
               core.setFailed(
                 'Pull Request title "${title}" did not start with any of the required prefixes - ${ALLOWED_PREFIXES}'
               );
