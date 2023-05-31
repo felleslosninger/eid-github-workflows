@@ -57,7 +57,7 @@ jobs:
               return;
             }
 
-            core.info('Allowed Prefixes: ${ALLOWED_PREFIXES}');
+            core.info("Allowed Prefixes: ${ALLOWED_PREFIXES}");
             if (
               ALLOWED_PREFIXES.length &&
               !ALLOWED_PREFIXES.some((prefix) => validateTitlePrefix(title, prefix))
