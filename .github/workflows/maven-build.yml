@@ -57,13 +57,13 @@ jobs:
               return;
             }
 
-            core.info("Allowed Prefixes: ${ALLOWED_PREFIXES}");
+            core.info(`Allowed Prefixes: ${ALLOWED_PREFIXES}`);
             if (
               ALLOWED_PREFIXES.length &&
               !ALLOWED_PREFIXES.some((prefix) => validateTitlePrefix(title, prefix))
             ) {
               core.setFailed(
-                'Pull Request title "${title}" did not start with any of the required prefixes - ${ALLOWED_PREFIXES}'
+                `Pull Request title "${title}" did not start with any of the required prefixes - ${ALLOWED_PREFIXES}`
               );
               return;
             }
