@@ -38,21 +38,21 @@ jobs:
             const { title } = context.payload.pull_request;
             if (!REGEX.test(title)) {
               core.setFailed(
-                'Pull Request title "${title}" failed to match regex - ${REGEX}'
+                `Pull Request title "${title}" failed to match regex - ${REGEX}`
               );
               return;
             }
 
             if (title.length < MIN_LENGTH) {
               core.setFailed(
-                'Pull Request title "${title}" is smaller than the minimum length - ${MIN_LENGTH}'
+                `Pull Request title "${title}" is smaller than the minimum length - ${MIN_LENGTH}`
               );
               return;
             }
 
             if (MAX_LENGTH > 0 && title.length > MAX_LENGTH) {
               core.setFailed(
-                'Pull Request title "${title}" is greater than the maximum length - ${MAX_LENGTH}'
+                `Pull Request title "${title}" is greater than the maximum length - ${MAX_LENGTH}`
               );
               return;
             }
