@@ -1,0 +1,43 @@
+name: Create Release Notes
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: Name of application repository
+        required: true
+        type: string
+      head-sha:
+        description: Head commit sha
+        required: true
+        type: string
+      base-sha:
+        description: Base commit sha
+        required: true
+        type: string
+    secrets:
+      token:
+        description: Token for read access to commits in application repo
+        required: true
+
+jobs:
+  create-release-notes:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        repository: felleslosninger/eid-github-workflows
+    - name: Create Release Notes
+      id: release-notes
+      uses: actions/github-script@v6
+      env:
+        REPO: ${{ inputs.repository }}
+        BASE: ${{ inputs.base-sha }}
+        HEAD: ${{ inputs.head-sha }}
+      with:
+        github-token: ${{ secrets.token }}
+        script: |
+          const releaseNotes = require('./.github/js/release-notes.js');
+          return await releaseNotes("${{ env.BASE }}", "${{ env.HEAD }}", "${{ env.REPO }}", github)
+    - name: Get result
+      run: echo ${{ toJSON(steps.release-notes.outputs.result) }}
