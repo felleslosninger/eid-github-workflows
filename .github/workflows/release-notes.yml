@@ -39,6 +39,6 @@ jobs:
         github-token: ${{ secrets.token }}
         script: |
           const releaseNotes = require('./.github/js/release-notes.js');
-          return await releaseNotes("${{ env.BASE }}", "${{ env.HEAD }}", "${{ env.REPO }}", github)
+          return await releaseNotes(${{ env.BASE }}, "${{ env.HEAD }}", "${{ env.REPO }}", github)
     - name: Get result
       run: echo ${{ toJSON(steps.release-notes.outputs.result) }}
