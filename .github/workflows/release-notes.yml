@@ -20,7 +20,7 @@ on:
         description: "Release notes array"
         value: ${{ jobs.create-release-notes.outputs.release-notes-array }}
     secrets:
-      token:
+      contents-read-token:
         description: Token for read access to commits in application repo
         required: true
 
@@ -42,7 +42,7 @@ jobs:
         BASE: ${{ inputs.base-sha }}
         HEAD: ${{ inputs.head-sha }}
       with:
-        github-token: ${{ secrets.token }}
+        github-token: ${{ secrets.contents-read-token }}
         script: |
           const releaseNotes = require('./.github/js/release-notes.js');
           return await releaseNotes(${{ env.BASE }}, "${{ env.HEAD }}", "${{ env.REPO }}", github)
