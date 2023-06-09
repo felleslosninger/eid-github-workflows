@@ -19,9 +19,6 @@ on:
       release-notes:
         description: "Release notes array"
         value: ${{ jobs.create-release-notes.outputs.release-notes-array }}
-      secondword:
-        description: "The second output string"
-        value: ${{ jobs.example_job.outputs.output2 }}
     secrets:
       token:
         description: Token for read access to commits in application repo

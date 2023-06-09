@@ -40,7 +40,7 @@ module.exports = async (base, head, repoName, github) => {
                 releaseLogEntries.push(releaseLogEntry);
             }
         });
-
+        
         return releaseLogEntries
     }
 
