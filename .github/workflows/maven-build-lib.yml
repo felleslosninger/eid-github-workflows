@@ -109,7 +109,7 @@ jobs:
             "password": "${{ secrets.maven-password }}"
             }]
       - name: Build with Maven
-        run: mvn -B package
+        run: mvn -B install
       - uses: anchore/sbom-action@v0
         with:
           path: ${{ inputs.sbom-path }}
