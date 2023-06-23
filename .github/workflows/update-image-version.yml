@@ -54,7 +54,7 @@ jobs:
           GIT_MSG: ${{ github.event.head_commit.message }}
         run: |
             JIID=$(echo "$GIT_MSG" | head -1 |
-            sed -E 's/^([a-zA-Z]{2,6}\-[0-9]+).+/\1/')
+            grep -Eo '^([a-zA-Z]{2,6}-[0-9]+)') || JIID=''
             echo "JIRAID=$JIID" >> "$GITHUB_OUTPUT"
       - id: output-jira-id
         if: ${{ steps.regex-find-jira-id.outputs.JIRAID != '' }}
