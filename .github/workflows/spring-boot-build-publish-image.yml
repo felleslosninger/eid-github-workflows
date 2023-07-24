@@ -154,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: print secrets
-        run: echo "Slack channel is=${{secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID}}" 
+        run: echo "Slack channel is=${{secrets.SLACK_PLATFORM_CI_CD_CHANNEL_ID}}" 
 
 #  notify-on-errors:
 #    #if: ${{ always() && contains(needs.*.result, 'failure') }}
