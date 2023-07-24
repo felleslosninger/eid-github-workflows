@@ -64,8 +64,9 @@ on:
         description: "Docker image SHA256 digest"
         value: ${{ jobs.build-publish-image.outputs.imagedigest }}
 env:
-  SLACK_PLATTFORM_CI_CD_CHANNEL_ID: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
-  
+  #SLACK_PLATTFORM_CI_CD_CHANNEL_ID: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
+  SLACK_PLATTFORM_CI_CD_CHANNEL_ID: 'U058DDWGPJT'
+
 jobs:
   build-publish-image:
       runs-on: ubuntu-latest
