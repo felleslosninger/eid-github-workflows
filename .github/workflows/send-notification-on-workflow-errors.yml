@@ -12,7 +12,7 @@ on:
         default: ''
       slack-platform-channel-id:
         type: string
-        required: true
+        required: false
 
 env:
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
@@ -23,7 +23,7 @@ jobs:
   send-notifications:
     strategy:
       matrix:
-        channel: ['${{ inputs.slack-channel-id }}', '${{ inputs.slack-platform-channel-id }}']
+        channel: ['${{ inputs.slack-channel-id }}', '${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}']
     runs-on: ubuntu-latest
     steps:
       - name: Notify
