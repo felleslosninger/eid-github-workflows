@@ -41,6 +41,10 @@ on:
       registry-url:
         description: Image/Container Registery URL
         required: true
+env:
+  #SLACK_PLATTFORM_CI_CD_CHANNEL_ID: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
+  SLACK_PLATTFORM_CI_CD_CHANNEL_ID: 'U058DDWGPJT'
+  
 jobs:
   update-version:
     runs-on: ubuntu-latest
@@ -100,4 +104,4 @@ jobs:
     uses: ./.github/workflows/send-notification-on-workflow-errors.yml
     with:
       slack-channel-id: ${{ inputs.slack-channel-id }}
-      slack-platform-channel-id: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }} 
+      slack-platform-channel-id: "$SLACK_PLATTFORM_CI_CD_CHANNEL_ID" 
