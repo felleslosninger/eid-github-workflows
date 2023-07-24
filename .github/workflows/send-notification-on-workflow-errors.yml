@@ -16,6 +16,14 @@ env:
   SLACK_PLATFORM_CHANNEL_ID: 'U058DDWGPJT'
 
 jobs:
+  prepare_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: print
+      - run: echo 'Now setting env variable'
+        env:
+          SLACK_PLATFORM_CHANNEL_ID: 'U058DDWGPJT'
+    
   send-notifications:
     strategy:
       matrix:
