@@ -29,6 +29,11 @@ on:
         default: 'update-version'
         required: false
         type: string
+      slack-channel-id:
+        description: Team channel id
+        default: ''
+        required: false
+        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -89,11 +94,9 @@ jobs:
           event-type: ${{ inputs.kubernetes-repo-event }}
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
           client-payload: '{"image-name": "${{env.IMAGE-NAME}}","image": "${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }},"pr-number":"${{ env.PR_NUMBER }}","pr-labels":"${{ env.PR_LABELS }}","sha":"${{ github.sha }}","repository":"${{ github.repository }}" }'
-  notify-if-failed:
-    runs-on: ubuntu-latest
-    needs: [update-version]
-    if: ${{ always() && contains(needs.*.result, 'failure') }}
-    steps:
-      - run: |
-          echo "Sending 'Workflow Test job' failed to slack"
-          echo "Sending 'Workflow Test job' failed to some alerting"
+  notify-on-errors:
+    #if: ${{ always() && contains(needs.*.result, 'failure') }}
+    needs: [build-publish-image]
+    uses: ./.github/workflows/send-notification-on-workflow-errors.yml
+    with:
+      slack-channel-id: ${{ inputs.slack-channel-id }}
