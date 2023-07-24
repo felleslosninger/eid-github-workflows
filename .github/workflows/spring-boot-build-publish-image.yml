@@ -63,6 +63,9 @@ on:
       image-digest:
         description: "Docker image SHA256 digest"
         value: ${{ jobs.build-publish-image.outputs.imagedigest }}
+env:
+  SLACK_PLATTFORM_CI_CD_CHANNEL_ID: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
+  
 jobs:
   build-publish-image:
       runs-on: ubuntu-latest
@@ -156,4 +159,4 @@ jobs:
     uses: ./.github/workflows/send-notification-on-workflow-errors.yml
     with:
       slack-channel-id: ${{ inputs.slack-channel-id }}
-      slack-platform-channel-id: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
+      slack-platform-channel-id: ${{ env.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
