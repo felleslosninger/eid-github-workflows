@@ -10,20 +10,20 @@ on:
         type: string
         required: false
         default: ''
-      slack-platform-channel-id:
-        type: string
-        required: false
+    secrets:
+      SLACK_PLATTFORM_CI_CD_CHANNEL_ID:
+        required: true
 
 env:
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
-  SLACK_PLATFORM_CHANNEL_ID: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
+  #SLACK_PLATFORM_CHANNEL_ID: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
   #SLACK_PLATFORM_CHANNEL_ID: 'U058DDWGPJT'
 
 jobs:
   send-notifications:
     strategy:
       matrix:
-        channel: ['${{ inputs.slack-channel-id }}', '${{ env.SLACK_PLATFORM_CHANNEL_ID }}']
+        channel: ['${{ inputs.slack-channel-id }}', '${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}']
     runs-on: ubuntu-latest
     steps:
       - name: Notify
