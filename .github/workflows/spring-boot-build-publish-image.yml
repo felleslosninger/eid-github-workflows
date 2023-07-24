@@ -158,5 +158,5 @@ jobs:
       slack-channel-id: ${{ inputs.slack-channel-id }}
       #slack-platform-channel-id: '${{ env.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}'
     secrets: 
-      SLACK_PLATTFORM_CI_CD_CHANNEL_ID: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
+      slack-platform-channel-id: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
 
