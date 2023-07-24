@@ -98,10 +98,10 @@ jobs:
           event-type: ${{ inputs.kubernetes-repo-event }}
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
           client-payload: '{"image-name": "${{env.IMAGE-NAME}}","image": "${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }},"pr-number":"${{ env.PR_NUMBER }}","pr-labels":"${{ env.PR_LABELS }}","sha":"${{ github.sha }}","repository":"${{ github.repository }}" }'
-  notify-on-errors:
-    #if: ${{ always() && contains(needs.*.result, 'failure') }}
-    needs: [update-version]
-    uses: ./.github/workflows/send-notification-on-workflow-errors.yml
-    with:
-      slack-channel-id: ${{ inputs.slack-channel-id }}
-      slack-platform-channel-id: '${{ env.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}' 
+#  notify-on-errors:
+#    #if: ${{ always() && contains(needs.*.result, 'failure') }}
+#    needs: [update-version]
+#    uses: ./.github/workflows/send-notification-on-workflow-errors.yml
+#    with:
+#      slack-channel-id: ${{ inputs.slack-channel-id }}
+#      slack-platform-channel-id: '${{ env.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}' 
