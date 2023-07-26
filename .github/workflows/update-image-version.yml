@@ -34,10 +34,6 @@ on:
         default: ''
         required: false
         type: string
-      platform-slack-channel-id:
-        description: Platform Team channel id
-        required: true
-        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -47,7 +43,10 @@ on:
         required: true
       slack-token:
         description: Slack bot token
-        required: true  
+        required: true
+      platform-slack-channel-id:
+        description: Platform Slack Channel Id
+        required: true
 jobs:
   update-version:
     runs-on: ubuntu-latest
@@ -108,7 +107,7 @@ jobs:
     uses: ./.github/workflows/send-notification-on-workflow-errors.yml
     with:
       slack-channel-id: ${{ inputs.slack-channel-id }}
-      slack-platform-channel-id: ${{ inputs.platform-slack-channel-id }}
+      slack-platform-channel-id: ${{ secrets.platform-slack-channel-id }}
     secrets:
       slack-token: ${{ secrets.slack-token }} 
     #secrets: inherit
