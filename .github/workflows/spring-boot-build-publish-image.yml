@@ -56,6 +56,15 @@ on:
       allure-password:
         description: Allure password for reporting results of unit tests
         required: false
+      slack-channel-id:
+        description: Team Channel Id
+        required: false
+      platform-slack-channel-id:
+        description: Platform Channel Id
+        required: true
+      slack-token:
+        description: Slack bot token
+        required: true
     outputs:
       image-version:
         description: "Docker image version"
@@ -161,6 +170,7 @@ jobs:
     needs: [build-publish-image]
     uses: ./.github/workflows/send-notification-on-workflow-errors.yml
     with:
-      slack-channel-id: ${{ inputs.slack-channel-id }}
-      slack-platform-channel-id: 'U058DDWGPJT'
-    secrets: inherit
+      slack-channel-id: ${{ secrets.slack-channel-id }}
+      slack-platform-channel-id: ${{ secrets.platform-slack-channel-id }}
+      slack-token: ${{ secrets.slack-token }} 
+    #secrets: inherit
