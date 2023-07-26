@@ -31,6 +31,10 @@ on:
         default: ''
         required: false
         type: string
+      platform-slack-channel-id:
+        description: Platform Team channel id
+        required: true
+        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
