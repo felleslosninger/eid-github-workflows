@@ -108,4 +108,4 @@ jobs:
       slack-channel-id: ${{ inputs.slack-channel-id }}
       slack-platform-channel-id: ${{ secrets.platform-slack-channel-id }}
       slack-token: ${{ secrets.slack-token }} 
-#    secrets: inherit
+    secrets: inherit
