@@ -107,7 +107,7 @@ jobs:
     uses: ./.github/workflows/send-notification-on-workflow-errors.yml
     with:
       slack-channel-id: ${{ inputs.slack-channel-id }}
-    secrets:
       slack-platform-channel-id: ${{ secrets.platform-slack-channel-id }}
+    secrets:
       slack-token: ${{ secrets.slack-token }} 
     #secrets: inherit
