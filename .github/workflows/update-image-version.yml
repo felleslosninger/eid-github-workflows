@@ -103,13 +103,11 @@ jobs:
           
   notify-on-errors:
     needs: [update-version]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send notifications to slack
-        #if: ${{ always() && contains(needs.*.result, 'failure') }}
-        uses: ./.github/workflows/send-notification-on-workflow-errors.yml
-        with:
-          slack-channel-id: ${{ inputs.slack-channel-id }}
-          slack-platform-channel-id: ${{ secrets.platform-slack-channel-id }}
-          slack-token: ${{ secrets.slack-token }} 
+    #if: ${{ always() && contains(needs.*.result, 'failure') }}
+    uses: ./.github/workflows/send-notification-on-workflow-errors.yml
+    with:
+      slack-channel-id: ${{ inputs.slack-channel-id }}
+    secrets:
+      slack-platform-channel-id: ${{ secrets.platform-slack-channel-id }}
+      slack-token: ${{ secrets.slack-token }} 
     #secrets: inherit
