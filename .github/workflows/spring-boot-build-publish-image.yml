@@ -60,9 +60,6 @@ on:
       allure-password:
         description: Allure password for reporting results of unit tests
         required: false
-      platform-slack-channel-id:
-        description: Platform Channel Id
-        required: true
       slack-token:
         description: Slack bot token
         required: true
@@ -167,7 +164,7 @@ jobs:
     uses: ./.github/workflows/send-notification-on-workflow-errors.yml
     with:
       slack-channel-id: ${{ inputs.slack-channel-id }}
-      slack-platform-channel-id: ${{ secrets.platform-slack-channel-id }}
+      slack-platform-channel-id: ${{ inputs.platform-slack-channel-id }}
     secrets:
       slack-token: ${{ secrets.slack-token }} 
     #secrets: inherit
