@@ -10,21 +10,20 @@ on:
         type: string
         required: false
         default: ''
+    secrets:
       slack-platform-channel-id:
-        type: string
         required: true
       slack-token:
-        type: string
         required: true
 
 env:
-  SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
+  SLACK_BOT_TOKEN: ${{ secrets.slack-token }}
 
 jobs:
   send-notifications:
     strategy:
       matrix:
-        channel: ['${{ inputs.slack-channel-id }}', '${{ inputs.slack-platform-channel-id }}']
+        channel: ['${{ inputs.slack-channel-id }}', '${{ secrets.slack-platform-channel-id }}']
     runs-on: ubuntu-latest
     steps:
       - name: Notify
