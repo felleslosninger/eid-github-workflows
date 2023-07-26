@@ -18,12 +18,13 @@ on:
 
 env:
   SLACK_BOT_TOKEN: ${{ secrets.slack-token }}
+  PLATFORM_SLACK_CHANNEL_ID: ${{ secrets.slack-platform-channel-id }} 
 
 jobs:
   send-notifications:
     strategy:
       matrix:
-        channel: ['${{ inputs.slack-channel-id }}', '${{ secrets.slack-platform-channel-id }}']
+        channel: ['${{ inputs.slack-channel-id }}', '${{ env.slack-platform-channel-id }}']
     runs-on: ubuntu-latest
     steps:
       - name: Notify
