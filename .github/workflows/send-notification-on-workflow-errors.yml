@@ -25,10 +25,13 @@ env:
 
 jobs:
   send-notifications:
+    runs-on: ubuntu-latest
+    env:
+      PLATTFORM_CHANNEL_ID: '${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}'
     strategy:
       matrix:
-        channel: ['${{ inputs.slack-channel-id }}', '${{ inputs.slack-platform-channel-id }}'] 
-    runs-on: ubuntu-latest
+        channel: ['${{ inputs.slack-channel-id }}', '${{ env.PLATTFORM_CHANNEL_ID }}'] 
+    
     steps:
       - name: Notify
         if: ${{ matrix.channel != '' }}
