@@ -20,23 +20,18 @@ on:
         required: true
 
 env:
-  #SLACK_BOT_TOKEN: ${{ secrets.slack-token }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
-  #SLACK_BOT_TOKEN: ${{ secrets.slack-token }}
   SLACK_PLATFORM_CHANNEL_ID: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
 
 jobs:
   send-notifications:
-#    strategy:
-#      matrix:
-#        channel: ['${{ inputs.slack-channel-id }}']
-#        include:
-#          - channel: ${{ env.SLACK_PLATFORM_CHANNEL_ID }}  
+    strategy:
+      matrix:
+        channel: ['${{ inputs.slack-channel-id }}'] 
     runs-on: ubuntu-latest
     steps:
       - name: Notify
-        #if: ${{ matrix.channel != '' }}
-        if: ${{ inputs.slack-channel-id != '' }}
+        if: ${{ matrix.channel != '' }}
         id: slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
@@ -71,40 +66,4 @@ jobs:
               ]
             }              
 
-  send-notifications-platform-channel:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify Platform Channel
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: ${{ env.SLACK_PLATFORM_CHANNEL_ID }}
-          payload: |
-            {
-              "text": "Github Action failed",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                   "type": "mrkdwn",
-                    "text": "GitHub Action - Workflow failed\n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.repository }}>*"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Repository:*\n${{ github.repository }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Run id:*\n${{ github.run_id }}"
-                    }
-                  ]
-                },
-               {
-                  "type": "divider"
-                }
-              ]
-            }              
-
+ 
