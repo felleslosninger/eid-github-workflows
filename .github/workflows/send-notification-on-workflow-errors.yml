@@ -13,13 +13,19 @@ on:
       slack-platform-channel-id:
         type: string
         required: true
+      slack-token:
+        type: string
+        required: true
+        
 #    secrets:
 #      slack-token:
 #        required: true
 
 env:
   #SLACK_BOT_TOKEN: ${{ secrets.slack-token }}
-  SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
+  #SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
+  SLACK_BOT_TOKEN: ${{ inputs.slack-token }}
+
 jobs:
   send-notifications:
     strategy:
