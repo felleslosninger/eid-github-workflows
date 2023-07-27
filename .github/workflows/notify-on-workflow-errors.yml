@@ -35,7 +35,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print slack channel id
-        run: echo "Channel id=${{ inputs.slack-channel-id }}"      
+        run: |
+          echo "Channel id=${{ inputs.slack-channel-id }}"
+          echo "Platform Channel id=$PLATFORM_CHANNEL_ID"
+        
   notify:
     needs: [build-publish-image, print]
     #if: ${{ always() && contains(needs.*.result, 'failure') }}
