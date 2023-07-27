@@ -29,7 +29,9 @@ jobs:
   send-notifications:
     strategy:
       matrix:
-        channel: ['${{ inputs.slack-channel-id }}', '${{ inputs.slack-platform-channel-id }}']
+        channel: ['${{ inputs.slack-channel-id }}']
+        include:
+          - channel: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}  
     runs-on: ubuntu-latest
     steps:
       - name: Notify
