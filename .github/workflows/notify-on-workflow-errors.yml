@@ -45,7 +45,7 @@ jobs:
       #slack-platform-channel-id: ${{ env.PLATFORM_CHANNEL_ID }}
       slack-platform-channel-id: ${{ inputs.slack-channel-id }}
       #slack-token: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}  
-    secrets:
-    #slack-token: ${{ secrets.slack-token }} 
-      slack-token: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}  
+    #secrets:
+      #slack-token: ${{ secrets.slack-token }} 
+      #slack-token: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}  
 
