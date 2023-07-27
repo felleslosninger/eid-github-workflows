@@ -56,9 +56,9 @@ on:
       allure-password:
         description: Allure password for reporting results of unit tests
         required: false
-      slack-token:
-        description: Slack bot token
-        required: true
+#      slack-token:
+#        description: Slack bot token
+#        required: true
       platform-slack-channel-id:
         description: Platform Slack Channel Id
         required: true
