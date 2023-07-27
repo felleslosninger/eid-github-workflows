@@ -44,9 +44,9 @@ on:
 #      slack-token:
 #        description: Slack bot token
 #        required: true
-      platform-slack-channel-id:
-        description: Platform Slack Channel Id
-        required: true
+#      platform-slack-channel-id:
+#        description: Platform Slack Channel Id
+#        required: true
 jobs:
   update-version:
     runs-on: ubuntu-latest
