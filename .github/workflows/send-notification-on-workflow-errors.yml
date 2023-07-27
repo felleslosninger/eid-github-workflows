@@ -77,7 +77,7 @@ jobs:
       - name: Notify Platform Channel
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
+          channel-id: ${{ env.SLACK_PLATFORM_CHANNEL_ID }}
           payload: |
             {
               "text": "Github Action failed",
