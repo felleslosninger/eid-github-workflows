@@ -30,9 +30,10 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Print channel id
-        - run: echo "Channel id=${{ inputs.image-name }}"
+          run: echo "Channel id=${{ inputs.slack-channel-id }}"
+        - name: Send notification            
           #if: ${{ always() && contains(needs.*.result, 'failure') }}
-        - uses: ./.github/workflows/send-notification-on-workflow-errors.yml
+          uses: ./.github/workflows/send-notification-on-workflow-errors.yml
           with:
             slack-channel-id: ${{ inputs.slack-channel-id }}
             #slack-platform-channel-id: ${{ env.PLATFORM_CHANNEL_ID }}
