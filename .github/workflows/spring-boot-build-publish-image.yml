@@ -150,10 +150,10 @@ jobs:
           run: echo "imagetag=${{env.IMAGETAG}}" >> "$GITHUB_OUTPUT"
         - id: output-image-digest
           run: echo "imagedigest=${{env.IMAGE_DIGEST}}" >> "$GITHUB_OUTPUT"
-      notify-on-errors:
-        needs: [ build-publish-image ]
-        if: ${{ always() && contains(needs.*.result, 'failure') }}
-        uses: ./.github/workflows/send-notification-on-workflow-errors.yml
-        with:
-          slack-channel-id: ${{ inputs.slack-channel-id }}
-        secrets: inherit
+  notify-on-errors:
+    needs: [ build-publish-image ]
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    uses: ./.github/workflows/send-notification-on-workflow-errors.yml
+    with:
+      slack-channel-id: ${{ inputs.slack-channel-id }}
+    secrets: inherit
