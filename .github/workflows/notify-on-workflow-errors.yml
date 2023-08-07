@@ -13,13 +13,6 @@ on:
         default: ''
         required: false
         type: string
-#    secrets:
-#      slack-token:
-#        description: Slack bot token
-#        required: true
-#      platform-slack-channel-id:
-#        description: Platform Slack Channel Id
-#        required: true
 
 env:
   PLATFORM_CHANNEL_ID: ${{ secrets.platform-slack-channel-id }}
