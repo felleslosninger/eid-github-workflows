@@ -39,6 +39,5 @@ jobs:
     uses: ./.github/workflows/send-notification-on-workflow-errors.yml
     with:
       slack-channel-id: ${{ inputs.slack-channel-id }}
-      slack-platform-channel-id: ${{ env.TEST_PLATFORM_CHANNEL_ID }} 
     secrets: inherit 
 
