@@ -1,6 +1,9 @@
 # Sends a notification to a slack channel if a workflow error occurs
 # If a team provides a slack channel id, a notification will also be sent to their channel
 
+# Using hardcoded plattform slack channel id: 'C05G4B8R2GG'
+
+
 name: Notify on workflow errors
 
 on:
@@ -9,16 +12,17 @@ on:
       slack-channel-id:
         type: string
         required: false
+        default: ''
 
 env:
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
 
 jobs:
   send-notifications:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        channel: ['${{ inputs.slack-channel-id }}', '${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}']
-    runs-on: ubuntu-latest
+        channel: ['${{ inputs.slack-channel-id }}', 'C05G4B8R2GG']
     steps:
       - name: Notify
         if: ${{ matrix.channel != '' }}

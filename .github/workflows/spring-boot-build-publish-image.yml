@@ -26,6 +26,11 @@ on:
         description: Container-scan is default download updated CVE definitions via Trivy, enable offline on download problems
         default: false
         type: boolean
+      slack-channel-id:
+        description: Team channel id
+        default: ''
+        required: false
+        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -145,3 +150,10 @@ jobs:
           run: echo "imagetag=${{env.IMAGETAG}}" >> "$GITHUB_OUTPUT"
         - id: output-image-digest
           run: echo "imagedigest=${{env.IMAGE_DIGEST}}" >> "$GITHUB_OUTPUT"
+      notify-on-errors:
+        needs: [ build-publish-image ]
+        if: ${{ always() && contains(needs.*.result, 'failure') }}
+        uses: ./.github/workflows/send-notification-on-workflow-errors.yml
+        with:
+          slack-channel-id: ${{ inputs.slack-channel-id }}
+        secrets: inherit
