@@ -13,25 +13,15 @@ on:
       slack-platform-channel-id:
         type: string
         required: true
-    secrets:
-      SLACK_CICD_NOTIFICATION_TOKEN:
-        required: true
-      SLACK_PLATTFORM_CI_CD_CHANNEL_ID:
-        required: true
-
 env:
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
-  SLACK_PLATFORM_CHANNEL_ID: ${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}
 
 jobs:
   send-notifications:
     runs-on: ubuntu-latest
-    env:
-      PLATTFORM_CHANNEL_ID: '${{ secrets.SLACK_PLATTFORM_CI_CD_CHANNEL_ID }}'
     strategy:
       matrix:
-        channel: ['${{ inputs.slack-channel-id }}', '${{ env.PLATTFORM_CHANNEL_ID }}'] 
-    
+        channel: ['${{ inputs.slack-channel-id }}', '${{ inputs.slack-platform-channel-id }}'] 
     steps:
       - name: Notify
         if: ${{ matrix.channel != '' }}
