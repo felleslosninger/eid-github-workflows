@@ -1,0 +1,62 @@
+# Sends a notification to a slack channel if a workflow error occurs
+# If a team provides a slack channel id, a notification will also be sent to their channel
+
+# Using hardcoded plattform slack channel id: 'C05G4B8R2GG'
+
+
+name: Notify on workflow errors
+
+on:
+  workflow_call:
+    inputs:
+      slack-channel-id:
+        type: string
+        required: false
+        default: ''
+
+env:
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
+
+jobs:
+  send-notifications:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        channel: ['${{ inputs.slack-channel-id }}', 'C05G4B8R2GG']
+    steps:
+      - name: Notify
+        if: ${{ matrix.channel != '' }}
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: ${{ matrix.channel }}
+          payload: |
+            {
+              "text": "Github Action failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                   "type": "mrkdwn",
+                    "text": "GitHub Action - Workflow failed\n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.repository }}>*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Repository:*\n${{ github.repository }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Run id:*\n${{ github.run_id }}"
+                    }
+                  ]
+                },
+               {
+                  "type": "divider"
+                }
+              ]
+            }              
+
