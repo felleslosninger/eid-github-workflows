@@ -38,7 +38,7 @@ jobs:
                   "type": "section",
                   "text": {
                    "type": "mrkdwn",
-                    "text": "GitHub Action - Workflow failed\n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.repository }}>*"
+                    "text": "GitHub Action - Workflow failed\n*${{ github.repository }}*"
                   }
                 },
                 {
@@ -50,7 +50,7 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Run id:*\n${{ github.run_id }}"
+                      "text": "*Run id:*\n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.run_id }}>*"
                     }
                   ]
                 },
