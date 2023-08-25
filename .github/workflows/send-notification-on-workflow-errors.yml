@@ -43,11 +43,15 @@ jobs:
 
       - name: Set manipulated commit message as env variable if triggered by PR
         if: ${{ contains(toJSON(github.event.head_commit.message), '\n') == true }}
-        run: echo "msg=${{ steps.message.outputs.value }}" >> "$GITHUB_ENV"
+        env:
+          TMP_MESSAGE: ${{ steps.message.outputs.value }}
+        run: echo "COMMIT_MESSAGE=${{ env.TMP_MESSAGE }}" >> "$GITHUB_ENV"
 
       - name: Set original commit message as env variable
         if: ${{ !contains(toJSON(github.event.head_commit.message), '\n') == true }}
-        run: echo "msg=${{ github.event.head_commit.message }}" >> "$GITHUB_ENV"
+        env:
+          TMP_MESSAGE: ${{ github.event.head_commit.message }}
+        run: echo "COMMIT_MESSAGE=${{ env.TMP_MESSAGE }}" >> "$GITHUB_ENV"
 
       - name: Notify
         if: ${{ matrix.channel != '' }}
@@ -63,7 +67,7 @@ jobs:
                   "type": "section",
                   "text": {
                    "type": "mrkdwn",
-                    "text": "GitHub Action - Workflow failed\n*${{ env.msg }}*"
+                    "text": "GitHub Action - Workflow failed\n*${{ env.COMMIT_MESSAGE }}*"
                   }
                 },
                 {
