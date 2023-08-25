@@ -24,6 +24,31 @@ jobs:
       matrix:
         channel: ['${{ inputs.slack-channel-id }}', 'C05G4B8R2GG']
     steps:
+      - name: Split commit message if triggered by PR
+        id: split
+        if: ${{ contains(toJSON(github.event.head_commit.message), '\n') == true }}
+        uses: jungwinter/split@v2
+        with:
+          msg: ${{ toJSON(github.event.head_commit.message) }}
+          separator: '\n'
+          maxsplit: -1
+      - name: Remove leading double quotas from commit message if triggered by PR
+        id: message
+        if: ${{ contains(toJSON(github.event.head_commit.message), '\n') == true }}
+        uses: mad9000/actions-find-and-replace-string@3
+        with:
+          source: ${{ steps.split.outputs._0 }}
+          find: '"'
+          replaceAll: ''
+
+      - name: Set manipulated commit message as env variable if triggered by PR
+        if: ${{ contains(toJSON(github.event.head_commit.message), '\n') == true }}
+        run: echo "msg=${{ steps.message.outputs.value }}" >> "$GITHUB_ENV"
+
+      - name: Set original commit message as env variable
+        if: ${{ !contains(toJSON(github.event.head_commit.message), '\n') == true }}
+        run: echo "msg=${{ github.event.head_commit.message }}" >> "$GITHUB_ENV"
+
       - name: Notify
         if: ${{ matrix.channel != '' }}
         id: slack
@@ -38,7 +63,14 @@ jobs:
                   "type": "section",
                   "text": {
                    "type": "mrkdwn",
-                    "text": "GitHub Action - Workflow failed\n*${{ github.repository }}*"
+                    "text": "GitHub Action - Workflow failed\n*${{ env.msg }}*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                   "type": "mrkdwn",
+                    "text": "*Workflow*\n${{ github.workflow_ref }}"
                   }
                 },
                 {
@@ -46,11 +78,20 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Repository:*\n${{ github.repository }}"
+                      "text": "*Repository*\n${{ github.repository }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Run id:*\n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.run_id }}>*"
+                      "text": "*Run id*\n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.run_id }}>*"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Committer*\n${{ github.actor }}"
                     }
                   ]
                 },
@@ -59,4 +100,3 @@ jobs:
                 }
               ]
             }              
-
