@@ -37,6 +37,13 @@ jobs:
           repository: felleslosninger/eid-github-workflows
           path: tools
           token: ${{ secrets.eid-build-token }}
+      - name: List files and directories
+        shell: bash
+        run: |
+          pwd
+          ls -la
+          ls -la .github
+          ls -la .github/workflows
       - name: Use JS Tools
         id: commit-message
         uses: actions/github-script@v6
