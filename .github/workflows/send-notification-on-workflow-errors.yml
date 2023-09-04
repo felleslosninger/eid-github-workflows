@@ -42,9 +42,9 @@ jobs:
         run: |
           pwd
           ls -la
+          ls -la tools
           ls -la .github
           ls -la .github/workflows
-          ls -la tools
       - name: Use JS Tools
         id: commit-message
         uses: actions/github-script@v6
