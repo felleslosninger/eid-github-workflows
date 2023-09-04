@@ -44,6 +44,7 @@ jobs:
           ls -la
           ls -la .github
           ls -la .github/workflows
+          ls -la tools
       - name: Use JS Tools
         id: commit-message
         uses: actions/github-script@v6
