@@ -13,16 +13,8 @@ on:
         type: string
         required: false
         default: ''
-    secrets:
-      eid-build-token:
-        description: Token from eid-build
-        required: true
-      slack_cicd_notification_token:
-        description: Slack token
-        required: true
-#env:
-  #SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
-  #SLACK_BOT_TOKEN: ${{ secrets.slack_cicd_notification_token }}
+env:
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
 
 jobs:
   send-notifications:
@@ -36,7 +28,6 @@ jobs:
         with:
           repository: felleslosninger/eid-github-workflows
           path: tools
-          token: ${{ secrets.eid-build-token }}
           ref: PF-786
       - name: List files and directories
         shell: bash
@@ -52,8 +43,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const utils = require('./tools/.github/js/github-context-utils.js');
-            const message = utils.getHeadCommitMessage(${{ toJson(github) }}); 
+            const Utils = require('./tools/.github/js/github-context-utils.js');
+            const message = Utils.getHeadCommitMessage(${{ toJson(github) }}); 
             return message;
       - name: Notify
         if: ${{ matrix.channel != '' }}
@@ -106,5 +97,3 @@ jobs:
                 }
               ]
             }              
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
