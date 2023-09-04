@@ -152,7 +152,7 @@ jobs:
           run: echo "imagedigest=${{env.IMAGE_DIGEST}}" >> "$GITHUB_OUTPUT"
   notify-on-errors:
     needs: [ build-publish-image ]
-    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    #if: ${{ always() && contains(needs.*.result, 'failure') }}
     uses: ./.github/workflows/send-notification-on-workflow-errors.yml
     with:
       slack-channel-id: ${{ inputs.slack-channel-id }}
