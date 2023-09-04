@@ -15,10 +15,10 @@ on:
         default: ''
     secrets:
       eid-build-token:
-        type: string
+        description: Token from eid-build
         required: true
       slack_cicd_notification_token:
-        type: string
+        description: Slack token
         required: true
 env:
   #SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
