@@ -24,35 +24,20 @@ jobs:
       matrix:
         channel: ['${{ inputs.slack-channel-id }}', 'C05G4B8R2GG']
     steps:
-      - name: Split commit message if triggered by PR
-        id: split
-        if: ${{ contains(toJSON(github.event.head_commit.message), '\n') == true }}
-        uses: jungwinter/split@v2
+      - name: Checkout JS Tools
+        uses: actions/checkout@v3
         with:
-          msg: ${{ toJSON(github.event.head_commit.message) }}
-          separator: '\n'
-          maxsplit: -1
-      - name: Remove leading double quotas from commit message if triggered by PR
-        id: message
-        if: ${{ contains(toJSON(github.event.head_commit.message), '\n') == true }}
-        uses: mad9000/actions-find-and-replace-string@3
+          repository: felleslosninger/eid-github-workflows
+          path: tools
+          token: ${{ secrets.EID_BUILD_PAT }}
+      - name: Use JS Tools
+        id: commit-message
+        uses: actions/github-script@v6
         with:
-          source: ${{ steps.split.outputs._0 }}
-          find: '"'
-          replaceAll: ''
-
-      - name: Set manipulated commit message as env variable if triggered by PR
-        if: ${{ contains(toJSON(github.event.head_commit.message), '\n') == true }}
-        env:
-          TMP_MESSAGE: ${{ steps.message.outputs.value }}
-        run: echo "COMMIT_MESSAGE=${{ env.TMP_MESSAGE }}" >> "$GITHUB_ENV"
-
-      - name: Set original commit message as env variable
-        if: ${{ !contains(toJSON(github.event.head_commit.message), '\n') == true }}
-        env:
-          TMP_MESSAGE: ${{ github.event.head_commit.message }}
-        run: echo "COMMIT_MESSAGE=${{ env.TMP_MESSAGE }}" >> "$GITHUB_ENV"
-
+          script: |
+            const Utils = require('./tools/.github/js/github-context-utils.js');
+            const message = Utils.getHeadCommitMessage(${{ toJson(github) }}); 
+            return message;
       - name: Notify
         if: ${{ matrix.channel != '' }}
         id: slack
@@ -67,7 +52,7 @@ jobs:
                   "type": "section",
                   "text": {
                    "type": "mrkdwn",
-                    "text": "GitHub Action - Workflow failed\n*${{ env.COMMIT_MESSAGE }}*"
+                    "text": "GitHub Action - Workflow failed\n*${{ fromJson(steps.commit-message.outputs.result) }}*"
                   }
                 },
                 {
