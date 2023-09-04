@@ -13,7 +13,9 @@ on:
         type: string
         required: false
         default: ''
-
+      eid-build-pat:
+        type: string
+        required: true
 env:
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
 
@@ -29,7 +31,7 @@ jobs:
         with:
           repository: felleslosninger/eid-github-workflows
           path: tools
-          token: ${{ secrets.EID_BUILD_PAT }}
+          token: ${{ inputs.eid-build-pat }}
       - name: Use JS Tools
         id: commit-message
         uses: actions/github-script@v6
