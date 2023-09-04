@@ -37,6 +37,7 @@ jobs:
           repository: felleslosninger/eid-github-workflows
           path: tools
           token: ${{ secrets.eid-build-token }}
+          ref: PF-786
       - name: List files and directories
         shell: bash
         run: |
