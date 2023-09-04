@@ -20,8 +20,8 @@ on:
       slack_cicd_notification_token:
         description: Slack token
         required: true
-env:
-  SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
+#env:
+  #SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
   #SLACK_BOT_TOKEN: ${{ secrets.slack_cicd_notification_token }}
 
 jobs:
@@ -106,3 +106,5 @@ jobs:
                 }
               ]
             }              
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
