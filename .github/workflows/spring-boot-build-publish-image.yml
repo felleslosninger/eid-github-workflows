@@ -156,5 +156,6 @@ jobs:
     uses: ./.github/workflows/send-notification-on-workflow-errors.yml
     with:
       slack-channel-id: ${{ inputs.slack-channel-id }}
-      eid-build-pat: ${{ secrets.eid-build-token }}
-    secrets: inherit
+    secrets:
+      eid-build-token: ${{ secrets.eid-build-token }}
+      slack_cicd_notification_token: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}

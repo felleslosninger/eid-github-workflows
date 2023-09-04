@@ -13,11 +13,16 @@ on:
         type: string
         required: false
         default: ''
-      eid-build-pat:
+    secrets:
+      eid-build-token:
+        type: string
+        required: true
+      slack_cicd_notification_token:
         type: string
         required: true
 env:
-  SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
+  #SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
+  SLACK_BOT_TOKEN: ${{ secrets.slack_cicd_notification_token }}
 
 jobs:
   send-notifications:
@@ -31,7 +36,7 @@ jobs:
         with:
           repository: felleslosninger/eid-github-workflows
           path: tools
-          token: ${{ inputs.eid-build-pat }}
+          token: ${{ secrets.eid-build-token }}
       - name: Use JS Tools
         id: commit-message
         uses: actions/github-script@v6
