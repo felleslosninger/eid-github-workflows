@@ -28,16 +28,6 @@ jobs:
         with:
           repository: felleslosninger/eid-github-workflows
           path: tools
-          ref: PF-786
-      - name: List files and directories
-        shell: bash
-        run: |
-          pwd
-          ls -la
-          ls -la tools
-          ls -la tools/.github
-          ls -la tools/.github/js
-          ls -la tools/.github/workflows
       - name: Use JS Tools
         id: commit-message
         uses: actions/github-script@v6
