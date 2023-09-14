@@ -80,7 +80,7 @@ jobs:
         - name: Set IMAGE-NAME env variable
           run: |
              echo "IMAGE-NAME=${{ secrets.registry-url }}/${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
           with:

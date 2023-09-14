@@ -65,7 +65,7 @@ jobs:
           run: |
              echo "IMAGE-NAME=${{ secrets.registry-url }}/${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
              echo "APPLICATION-NAME=${{ inputs.application-name || env.REPOSITORY-NAME  }}" >> "$GITHUB_ENV"
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
           with:
