@@ -31,6 +31,11 @@ on:
         default: ''
         required: false
         type: string
+      application-yaml-path:
+        description: The folder where your application.yaml files are located, overwrite inmulti module projects
+        default: 'src/main/resources/'
+        required: false
+        type: string
     secrets:
       eid-build-token:
         description: Token from eid-build
@@ -84,7 +89,7 @@ jobs:
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
           with:
-            file_or_dir: src/main/resources/application*.y*ml
+            file_or_dir: ${{ inputs.application-yaml-path }}/application*.y*ml
             config_data: |
               extends: default
               rules:
