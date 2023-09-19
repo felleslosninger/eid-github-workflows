@@ -25,9 +25,9 @@ on:
         description: Container-scan is default download updated CVE definitions via Trivy, enable offline on download problems
         default: false
         type: boolean
-      application-yaml-path:
-        description: The folder where your application.yaml files are located, overwrite inmulti module projects
-        default: 'src/main/resources/'
+      application-path:
+        description: The root folder of your application, overwrite in multi module projects
+        default: ''
         required: false
         type: string
     secrets:
@@ -74,7 +74,7 @@ jobs:
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
           with:
-            file_or_dir: ${{ inputs.application-yaml-path }}application*.y*ml
+            file_or_dir: ${{ inputs.application-path }}src/main/resources/application*.y*ml
             config_data: |
               extends: default
               rules:
@@ -109,7 +109,7 @@ jobs:
         - name: Maven update version used in application.yaml
           run: mvn versions:set -B -DnewVersion="$IMAGETAG"
         - name: Build image with Maven/Spring Boot
-          run: mvn -B spring-boot:build-image --file pom.xml -Dspring-boot.build-image.imageName=${{env.IMAGE-NAME}}:${{env.IMAGETAG}} -Dspring-boot.build-image.builder=paketobuildpacks/${{ inputs.image-pack }} -Dspring-boot.build-image.createdDate=now
+          run: mvn -B spring-boot:build-image --file ${{ inputs.application-path }}pom.xml -Dspring-boot.build-image.imageName=${{env.IMAGE-NAME}}:${{env.IMAGETAG}} -Dspring-boot.build-image.builder=paketobuildpacks/${{ inputs.image-pack }} -Dspring-boot.build-image.createdDate=now
         - name: Run Trivy vulnerability scanner
           uses: aquasecurity/trivy-action@41f05d9ecffa2ed3f1580af306000f734b733e54 # pin@v0.11.2
           with:
