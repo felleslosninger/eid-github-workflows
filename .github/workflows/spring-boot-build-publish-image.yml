@@ -89,7 +89,7 @@ jobs:
         - name: yaml-lint
           uses: ibiqlik/action-yamllint@v3
           with:
-            file_or_dir: ${{ inputs.application-path }}src/main/resources/application*.y*ml
+            file_or_dir: ${{ inputs.application-root }}src/main/resources/application*.y*ml
             config_data: |
               extends: default
               rules:
