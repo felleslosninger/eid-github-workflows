@@ -25,7 +25,7 @@ on:
         description: Container-scan is default download updated CVE definitions via Trivy, enable offline on download problems
         default: false
         type: boolean
-      application-path:
+      application-root:
         description: The root folder of your application, overwrite in multi module projects
         default: ''
         required: false
