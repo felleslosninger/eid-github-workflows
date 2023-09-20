@@ -37,6 +37,10 @@ on:
         required: false
         type: string
     secrets:
+      feedUsernameSecret:
+        required: true
+      feedPasswordSecret:
+        required: true
       eid-build-token:
         description: Token from eid-build
         required: false
@@ -113,6 +117,11 @@ jobs:
             servers: |
               [{
                   "id": "github-oidc-sdk",
+                  "username": "${{ secrets.maven-user }}",
+                  "password": "${{ secrets.maven-password }}"
+              },
+               {
+                  "id": "MavenArtifactFeed",
                   "username": "${{ secrets.maven-user }}",
                   "password": "${{ secrets.maven-password }}"
               },
