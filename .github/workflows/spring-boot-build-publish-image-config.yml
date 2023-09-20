@@ -31,10 +31,6 @@ on:
         required: false
         type: string
     secrets:
-      feedUsernameSecret:
-        required: true
-      feedPasswordSecret:
-        required: true
       eid-build-token:
         description: Token from eid-build
         required: true
@@ -107,8 +103,8 @@ jobs:
               },
               {
                 "id": "MavenArtifactFeed",
-                "username": "${{ secrets.feedUsernameSecret }}",
-                "password": "${{ secrets.feedPasswordSecret }}"
+                "username": "${{ secrets.maven-user }}",
+                "password": "${{ secrets.maven-password }}"
               },
               {
                 "id": "github",
