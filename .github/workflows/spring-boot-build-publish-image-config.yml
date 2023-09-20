@@ -102,6 +102,11 @@ jobs:
                   "password": "${{ secrets.maven-password }}"
               },
               {
+                "id": "MavenArtifactFeed",
+                "username": "${{ secrets.maven-user }}",
+                "password": "${{ secrets.maven-password }}"
+              },
+              {
                 "id": "github",
                 "username": "${{ secrets.maven-user }}",
                 "password": "${{ secrets.maven-password }}"
