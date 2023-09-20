@@ -37,10 +37,6 @@ on:
         required: false
         type: string
     secrets:
-      feedUsernameSecret:
-        required: true
-      feedPasswordSecret:
-        required: true
       eid-build-token:
         description: Token from eid-build
         required: false
