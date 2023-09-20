@@ -122,8 +122,8 @@ jobs:
               },
                {
                   "id": "MavenArtifactFeed",
-                  "username": "${{ secrets.maven-user }}",
-                  "password": "${{ secrets.maven-password }}"
+                  "username": "${{ secrets.feedUsernameSecret }}",
+                  "password": "${{ secrets.feedPasswordSecret }}"
               },
               {
                 "id": "github",
