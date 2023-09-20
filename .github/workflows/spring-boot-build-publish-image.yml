@@ -134,7 +134,7 @@ jobs:
         - name: Perform Maven Deploy to MavenArtifactFeed
           shell: bash
           run: |            
-            mvn -DskipTests -s settings.xml deploy -ntp -Dmaven.repo.local=${{ github.workspace }}/.m2/repository -Dhttp.keepAlive=false -Dmaven.wagon.http.retryHandler.count=3
+            mvn -DskipTests deploy -ntp -Dmaven.repo.local=${{ github.workspace }}/.m2/repository -Dhttp.keepAlive=false -Dmaven.wagon.http.retryHandler.count=3
 
         - name: Build image with Maven/Spring Boot
           run: mvn -B spring-boot:build-image --file ${{ inputs.application-root }}pom.xml -Dspring-boot.build-image.imageName=${{env.IMAGE-NAME}}:${{env.IMAGETAG}} -Dspring-boot.build-image.builder=paketobuildpacks/${{ inputs.image-pack }} -Dspring-boot.build-image.createdDate=now
