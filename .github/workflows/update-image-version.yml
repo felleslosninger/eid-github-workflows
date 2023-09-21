@@ -35,6 +35,12 @@ on:
         required: false
         type: string
     secrets:
+      digdir-platform-ci-app-id:
+        description: Github App ID
+        required: true
+      digdir-platform-ci-app-private-key:
+        description: Github App Private Key
+        required: true
       eid-build-token:
         description: Token from eid-build
         required: true
@@ -78,11 +84,48 @@ jobs:
       - id: output-dependabot
         if: ${{ steps.regex-find-jira-id.outputs.match == '' && env.DEPENDABOT == 'true' }}
         run: echo "JIRA_ID=Dependabot" >> "$GITHUB_ENV"
+      - run: npm install @octokit/app@v13.1.8
+      - name: Generate Token
+        uses: actions/github-script@v6
+        id: token
+        env:
+          GH_APP_ID: ${{ secrets.digdir-platform-ci-app-id }}
+          GH_APP_PRIVATE_KEY: ${{ secrets.digdir-platform-ci-app-private-key }}
+        with:
+          script: |
+            const { App } = require("@octokit/app");
+            
+            const app = new App({
+              appId: process.env.GH_APP_ID,
+              privateKey: process.env.GH_APP_PRIVATE_KEY,
+            });
+            
+            const octokit = app.octokit;
+            
+            const repository = 'felleslosninger/${{ inputs.kubernetes-repo }}';
+            
+            const [owner, repo] = repository.split('/');
+  
+            const { data: installation } = await octokit.request("GET /repos/{owner}/{repo}/installation", {
+              owner,
+              repo
+            });
+            
+            const installationId = installation.id;
+  
+            const { data: { token } } = await octokit.request(`POST /app/installations/${installationId}/access_tokens`, {
+              repositories: [repo]
+            });
+            
+            core.setSecret(token);
+            
+            return token;
+          result-encoding: string
       - name: 'update Kubernetes for new version of image ${{env.IMAGE-NAME}} (Dependabot)'
         if: ${{ env.DEPENDABOT == 'true' }}
         uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # pin@v2
         with:
-          token: ${{ secrets.eid-build-token }}
+          token: ${{ steps.token.outputs.result }}
           event-type: ${{ inputs.kubernetes-repo-event }}
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
           client-payload: '{"image-name": "${{env.IMAGE-NAME}}","image": "${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","actor":"${{github.event.pusher.name }}","pr-number":"${{ env.PR_NUMBER }}","pr-labels":"${{ env.PR_LABELS }}","sha":"${{ github.sha }}","repository":"${{ github.repository }}" }'
@@ -90,7 +133,7 @@ jobs:
         if: ${{ env.DEPENDABOT == 'false' }}
         uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # pin@v2
         with:
-          token: ${{ secrets.eid-build-token }}
+          token: ${{ steps.token.outputs.result }}
           event-type: ${{ inputs.kubernetes-repo-event }}
           repository: 'felleslosninger/${{ inputs.kubernetes-repo }}'
           client-payload: '{"image-name": "${{env.IMAGE-NAME}}","image": "${{env.IMAGE-NAME}}:${{inputs.image-version}}@${{inputs.image-digest}}","version":"${{inputs.image-version}}","application-name":"${{env.APPLICATION-NAME}}","jira-id":"${{env.JIRA_ID}}","author":${{ toJSON(github.event.head_commit.author) }},"pr-number":"${{ env.PR_NUMBER }}","pr-labels":"${{ env.PR_LABELS }}","sha":"${{ github.sha }}","repository":"${{ github.repository }}" }'
