@@ -28,13 +28,13 @@ jobs:
         with:
           repository: felleslosninger/eid-github-workflows
           path: tools
-      - name: Use JS Tools
+      - name: Get commit message
         id: commit-message
         uses: actions/github-script@v6
         with:
           script: |
             const Utils = require('./tools/.github/js/github-context-utils.js');
-            const message = Utils.getHeadCommitMessage(${{ toJson(github) }}); 
+            const message = Utils.getCommitMessage(${{ toJson(github) }});
             return message;
       - name: Notify
         if: ${{ matrix.channel != '' }}
@@ -86,4 +86,4 @@ jobs:
                   "type": "divider"
                 }
               ]
-            }              
+            }
