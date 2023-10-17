@@ -30,20 +30,20 @@ jobs:
     outputs:
       release-notes-array: ${{ steps.release-notes.outputs.result }}
     steps:
-    - uses: actions/checkout@v3
-      with:
-        repository: felleslosninger/eid-github-workflows
-    - name: Create Release Notes
-      id: release-notes
-      uses: actions/github-script@v6
-      env:
-        REPO: ${{ inputs.repository }}
-        BASE: ${{ inputs.base-sha }}
-        HEAD: ${{ inputs.head-sha }}
-      with:
-        github-token: ${{ secrets.contents-read-token }}
-        script: |
-          const releaseNotes = require('./.github/js/release-notes.js');
-          return await releaseNotes(${{ env.BASE }}, "${{ env.HEAD }}", "${{ env.REPO }}", github)
-    - name: Get result
-      run: echo ${{ toJSON(steps.release-notes.outputs.result) }}
+      - uses: actions/checkout@v3
+        with:
+          repository: felleslosninger/eid-github-workflows
+      - name: Create Release Notes
+        id: release-notes
+        uses: actions/github-script@v6
+        env:
+          REPO: ${{ inputs.repository }}
+          BASE: ${{ inputs.base-sha }}
+          HEAD: ${{ inputs.head-sha }}
+        with:
+          github-token: ${{ secrets.contents-read-token }}
+          script: |
+            const releaseNotes = require('./.github/js/release-notes.js');
+            return await releaseNotes("${{ env.BASE }}", "${{ env.HEAD }}", "${{ env.REPO }}", github)
+      - name: Get result
+        run: echo ${{ toJSON(steps.release-notes.outputs.result) }}
