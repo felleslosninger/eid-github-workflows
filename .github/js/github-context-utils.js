@@ -15,19 +15,19 @@ module.exports.getCommitMessage = function(github) {
         return message;
         }());
     return commitMessage;
-}
+  }
 
-module.exports.getRepository = function(github) {
+  module.exports.getRepository = function(github) {
     const json = JSON.parse(JSON.stringify(github));
     return json.repository;
-}
+  }
 
-module.exports.getSHA = function(github) {
+  module.exports.getSHA = function(github) {
     const json = JSON.parse(JSON.stringify(github));
     return json.sha;
-}
+  }
 
-function getCommitMessageTriggeredByAction(githubContext) {
+  function getCommitMessageTriggeredByAction(githubContext) {
     const obj = JSON.parse(JSON.stringify(githubContext));
     let commitMessage = '';
     const action = obj.event.action;
@@ -45,9 +45,9 @@ function getCommitMessageTriggeredByAction(githubContext) {
         }
     }
     return commitMessage;
-}
+  }
 
-function getHeadCommitMessage(githubContext) {
+  function getHeadCommitMessage(githubContext) {
     const obj = JSON.parse(JSON.stringify(githubContext));
     let headCommitMessage = '';
     const message = obj.event.head_commit.message;
@@ -58,9 +58,9 @@ function getHeadCommitMessage(githubContext) {
         headCommitMessage = message;
     }
     return headCommitMessage
-}
+  }
 
-function getOrdinaryCommitMessage(githubContext) {
+  function getOrdinaryCommitMessage(githubContext) {
     const obj = JSON.parse(JSON.stringify(githubContext));
     return obj.event.commits[0].message;
-}
+  }
