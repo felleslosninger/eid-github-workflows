@@ -31,7 +31,7 @@ module.exports.getCommitMessage = function(github) {
     const obj = JSON.parse(JSON.stringify(githubContext));
     let commitMessage = '';
     const action = obj.event.action;
-    commitMessage = "Erronous workflow was triggered by Action: " + action;
+    commitMessage = "No commit message found in Action run: " + action;
     if (obj.event.hasOwnProperty('client_payload')) {
         const clientPayload = obj.event.client_payload;
         if (clientPayload.hasOwnProperty('application-name')) {
