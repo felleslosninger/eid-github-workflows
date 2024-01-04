@@ -33,7 +33,7 @@ jobs:
         env:
           UPDATE_TYPES: ${{ inputs.update-types }}
         run: |
-          arr=(${UPDATE_TYPES//;/ })
+          arr="(${UPDATE_TYPES//;/ })"
           count=${#arr[@]}
           echo "Types: ${arr[*]}"
           echo "Count: ${count}"
