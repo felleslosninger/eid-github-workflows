@@ -7,7 +7,7 @@ on:
       update-types:
         description: Update types
         default: 'version-update:semver-patch;version-update:semver-minor'
-        required: true
+        required: false
         type: string
     secrets:
       github-token:
@@ -37,8 +37,8 @@ jobs:
           count=${#arr[@]}
           echo "Types: ${arr[*]}"
           echo "Count: ${count}"
-          echo "types=${arr[*]}" >> $GITHUB_OUTPUT
-          echo "count=${count}" >> $GITHUB_OUTPUT
+          echo "types=${arr[*]}" >> "$GITHUB_OUTPUT"
+          echo "count=${count}" >> "$GITHUB_OUTPUT"
 
       - name: Fetch Dependabot metadata
         if: ${{ fromJson(steps.update-types.outputs.count) > 0 }}
@@ -52,7 +52,7 @@ jobs:
           gh pr edit "$PR_URL" --add-label "auto-merged"
           gh pr review --approve "$PR_URL"
           gh pr merge --auto --squash "$PR_URL"
-          echo "STATUS=true" >> $GITHUB_OUTPUT
+          echo "STATUS=true" >> "$GITHUB_OUTPUT"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.github-token }}
@@ -63,6 +63,6 @@ jobs:
           if [ "${STATUS}" == "true" ]; then
               result=" auto-merge! :white_check_mark:"
           fi
-          echo "### Done with ${result}" >> $GITHUB_STEP_SUMMARY
+          echo "### Done with ${result}" >> "$GITHUB_STEP_SUMMARY"
         env:
           STATUS: ${{ steps.auto-merge.outputs.STATUS }}
