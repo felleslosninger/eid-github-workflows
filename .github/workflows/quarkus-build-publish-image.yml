@@ -128,7 +128,7 @@ jobs:
           env:
             PACK_VERSION: 0.32.1
         - name: Build image with Maven/Quarkus
-          run: pack build ${{env.IMAGE-NAME}}:${{env.IMAGETAG}} --path . --buildpack "paketo-buildpacks/quarkus" --buildpack "paketo-buildpacks/java" --builder paketobuildpacks/${{ inputs.image-pack }} --volume "~/.m2:/home/cnb/.m2" --env BP_JVM_VERSION="${{ inputs.java-version }}" --env BP_MAVEN_POM_FILE="./pom.xml" --creation-time now
+          run: pack build ${{env.IMAGE-NAME}}:${{env.IMAGETAG}} --path . --buildpack "paketo-buildpacks/quarkus" --buildpack "paketo-buildpacks/java" --builder paketobuildpacks/${{ inputs.image-pack }} --volume "${HOME}/.m2:/home/cnb/.m2" --env BP_JVM_VERSION="${{ inputs.java-version }}" --env BP_MAVEN_POM_FILE="./pom.xml" --creation-time now
         - name: Run Trivy vulnerability scanner
           uses: aquasecurity/trivy-action@41f05d9ecffa2ed3f1580af306000f734b733e54 # pin@v0.11.2
           with:
