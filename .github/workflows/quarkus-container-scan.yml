@@ -1,0 +1,105 @@
+name: Container scan
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: Name of Docker image
+        required: false
+        type: string
+      image-pack:
+        description: Docker image pack of builder-jammy-tiny, builder-jammy-base or builder-jammy-full
+        default: builder-jammy-tiny
+        required: false
+        type: string
+      registry-url:
+        description: Image/Container Registery URL
+        default: 'my-local-registery'
+        required: false
+        type: string
+      java-version:
+        description: Main version of java
+        default: '11'
+        required: false
+        type: string
+      container-scan-offline-mode:
+        description: Container-scan is default download updated CVE definitions via Trivy, enable offline on download problems
+        default: false
+        type: boolean
+    secrets:
+      eid-build-token:
+        description: Token from eid-build
+        required: false
+      maven-user:
+        description: Maven user
+        required: true
+      maven-password:
+        description: Maven password
+        required: true
+
+
+jobs:
+  build-and-scan-image:
+      runs-on: ubuntu-latest
+      env:
+        REPOSITORY-NAME: ${{ github.event.repository.name }}
+        DOCKLE_HOST: "unix:///var/run/docker.sock"
+        #TRIVY_TIMEOUT: "15m"
+        TRIVY_OFFLINE_SCAN: ${{ inputs.container-scan-offline-mode }}
+      steps:
+        - name: Set imagetag as env variable
+          run: echo "IMAGETAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::8}" >> "$GITHUB_ENV"
+        - name: Set IMAGE-NAME env variable
+          run: |
+             echo "IMAGE-NAME=${{ inputs.registry-url }}/${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
+        - uses: actions/checkout@v3
+        - name: Cache Maven packages
+          uses: actions/cache@v3.3.1
+          with:
+            path: ~/.m2
+            key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+            restore-keys: ${{ runner.os }}-m2
+        - uses: s4u/maven-settings-action@v2.8.0
+          with:
+            servers: |
+              [{
+                  "id": "github-oidc-sdk",
+                  "username": "${{ secrets.maven-user }}",
+                  "password": "${{ secrets.maven-password }}"
+              },
+              {
+                "id": "github",
+                "username": "${{ secrets.maven-user }}",
+                "password": "${{ secrets.maven-password }}"
+              }]      
+        - name: Install pack
+          run: |
+            #!/usr/bin/env bash
+            set -euo pipefail
+            echo "Installing pack ${PACK_VERSION}"
+            mkdir -p /usr/local/bin
+            curl \
+              --location \
+              --show-error \
+              --silent \
+              "https://github.com/buildpacks/pack/releases/download/v${PACK_VERSION}/pack-v${PACK_VERSION}-linux.tgz" \
+            | sudo tar -C /usr/local/bin/bin --no-same-owner -xzv pack
+          env:
+            PACK_VERSION: 0.32.1
+        - name: Build image with Maven/Quarkus
+          run: pack build ${{env.IMAGE-NAME}}:${{env.IMAGETAG}} --path . --buildpack "paketo-buildpacks/quarkus" --buildpack "paketo-buildpacks/java" --builder paketobuildpacks/${{ inputs.image-pack }} --volume "~/.m2:/home/cnb/.m2" --env BP_JVM_VERSION="${{ inputs.java-version }}" --env BP_MAVEN_POM_FILE="./pom.xml" --creation-time now
+        - name: Create SBOM artifact-name
+          id: sbom-name
+          run: |
+            SBOM_NAME=$(echo ${{env.IMAGE-NAME}} | tr '/' '-')
+            echo "SBOM_ARTIFACT_ID=$SBOM_NAME" >> "$GITHUB_OUTPUT"
+        - uses: anchore/sbom-action@v0
+          with:
+            image: ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            artifact-name: sbom-${{steps.sbom-name.outputs.SBOM_ARTIFACT_ID}}-${{env.IMAGETAG}}.spdx
+        - name: Run Trivy vulnerability scanner
+          uses: aquasecurity/trivy-action@41f05d9ecffa2ed3f1580af306000f734b733e54 # pin@v0.11.2
+          with:
+            image-ref: ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
+            exit-code: '1'
+            severity: 'CRITICAL,HIGH'
