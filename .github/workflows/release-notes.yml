@@ -30,7 +30,7 @@ jobs:
     outputs:
       release-notes-array: ${{ steps.release-notes.outputs.result }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: felleslosninger/eid-github-workflows
     - name: Create Release Notes
