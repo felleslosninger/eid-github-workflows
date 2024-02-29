@@ -52,7 +52,11 @@ jobs:
         - name: Set IMAGE-NAME env variable
           run: |
              echo "IMAGE-NAME=${{ inputs.registry-url }}/${{ inputs.image-name || env.REPOSITORY-NAME }}" >> "$GITHUB_ENV"
+        
         - uses: actions/checkout@v4
+          with:
+            ref: ${{ github.head_ref }}
+            
         - name: Set up JDK ${{ inputs.java-version }}
           uses: actions/setup-java@v3
           with:
