@@ -13,7 +13,6 @@ on:
         type: string
         required: false
         default: ''
-
 env:
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_CICD_NOTIFICATION_TOKEN }}
 
@@ -24,6 +23,19 @@ jobs:
       matrix:
         channel: ['${{ inputs.slack-channel-id }}', 'C05G4B8R2GG']
     steps:
+      - name: Checkout JS Tools
+        uses: actions/checkout@v4
+        with:
+          repository: felleslosninger/eid-github-workflows
+          path: tools
+      - name: Get commit message
+        id: commit-message
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const Utils = require('./tools/.github/js/github-context-utils.js');
+            const message = Utils.getCommitMessage(${{ toJson(github) }});
+            return message;
       - name: Notify
         if: ${{ matrix.channel != '' }}
         id: slack
@@ -38,7 +50,14 @@ jobs:
                   "type": "section",
                   "text": {
                    "type": "mrkdwn",
-                    "text": "GitHub Action - Workflow failed\n*${{ github.repository }}*"
+                    "text": "GitHub Action - Workflow failed\n*${{ fromJson(steps.commit-message.outputs.result) }}*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                   "type": "mrkdwn",
+                    "text": "*Workflow*\n${{ github.workflow_ref }}"
                   }
                 },
                 {
@@ -46,11 +65,20 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Repository:*\n${{ github.repository }}"
+                      "text": "*Repository*\n${{ github.repository }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Run id:*\n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.run_id }}>*"
+                      "text": "*Run id*\n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.run_id }}>*"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Committer*\n${{ github.actor }}"
                     }
                   ]
                 },
@@ -58,5 +86,4 @@ jobs:
                   "type": "divider"
                 }
               ]
-            }              
-
+            }
