@@ -1,0 +1,105 @@
+name: Maven multimodule build java
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: Main version of java
+        default: '11'
+        required: false
+        type: string
+      sbom-path:
+        description: Target directory(-ies) for SBOM generation
+        default: ./target/
+        required: false
+        type: string
+    secrets:
+      eid-build-token:
+        description: Token from eid-build
+        required: false
+      maven-user:
+        description: Maven user
+        required: true
+      maven-password:
+        description: Maven password
+        required: true
+jobs:
+  verify-pull-request-title:
+    if: ${{ github.event_name == 'pull_request'}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const REGEX = new RegExp("^[^…]+$");  // Title must match this regex
+            const MIN_LENGTH = 10;                 // Min length of the title
+            const MAX_LENGTH = 100;                // Max length of the title (-1 is no max)
+            const ALLOWED_PREFIXES = ['Bump','ID-','MIN-','PBLEID-','MP-','KRR-','PF-','AOS-','SP-'];         // Title must start with one of these prefixes
+            const PREFIX_CASE_SENSITIVE = false;  // Whether the prefix is case sensitive
+
+            const validateTitlePrefix = (title, prefix) =>
+              PREFIX_CASE_SENSITIVE
+                ? title.startsWith(prefix)
+                : title.toLowerCase().startsWith(prefix.toLowerCase());
+
+            const { title } = context.payload.pull_request;
+            if (!REGEX.test(title)) {
+              core.setFailed(
+                `Pull Request title "${title}" failed to match regex - ${REGEX}`
+              );
+              return;
+            }
+
+            if (title.length < MIN_LENGTH) {
+              core.setFailed(
+                `Pull Request title "${title}" is smaller than the minimum length - ${MIN_LENGTH}`
+              );
+              return;
+            }
+
+            if (MAX_LENGTH > 0 && title.length > MAX_LENGTH) {
+              core.setFailed(
+                `Pull Request title "${title}" is greater than the maximum length - ${MAX_LENGTH}`
+              );
+              return;
+            }
+
+            core.info(`Allowed Prefixes: ${ALLOWED_PREFIXES}`);
+            if (
+              ALLOWED_PREFIXES.length &&
+              !ALLOWED_PREFIXES.some((prefix) => validateTitlePrefix(title, prefix))
+            ) {
+              core.setFailed(
+                `Pull Request title "${title}" did not start with any of the required prefixes - ${ALLOWED_PREFIXES}`
+              );
+              return;
+            }
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK ${{ inputs.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'liberica'
+          java-version: ${{ inputs.java-version }}
+      - name: Cache Maven packages
+        uses: actions/cache@v4.0.0
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - uses: s4u/maven-settings-action@v3.0.0
+        with:
+          servers: |
+            [{
+            "id": "github",
+            "username": "${{ secrets.maven-user }}",
+            "password": "${{ secrets.maven-password }}"
+            }]
+      - name: Build with Maven
+        run: mvn -B install
+
+      - uses: anchore/sbom-action@v0
+        with:
+          path: ${{ inputs.sbom-path }}
