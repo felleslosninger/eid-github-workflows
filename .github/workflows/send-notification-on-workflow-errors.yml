@@ -30,7 +30,7 @@ jobs:
           path: tools
       - name: Get commit message
         id: commit-message
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const Utils = require('./tools/.github/js/github-context-utils.js');
@@ -39,7 +39,7 @@ jobs:
       - name: Notify
         if: ${{ matrix.channel != '' }}
         id: slack
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ matrix.channel }}
           payload: |
