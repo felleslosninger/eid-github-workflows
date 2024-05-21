@@ -136,7 +136,7 @@ jobs:
             image: ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             artifact-name: sbom-${{steps.sbom-name.outputs.SBOM_ARTIFACT_ID}}-${{env.IMAGETAG}}.spdx
         - name: 'Login Azure docker container registery'
-          uses: azure/docker-login@v1
+          uses: azure/docker-login@v2
           with:
             login-server: ${{ secrets.registry-url }}
             username: ${{ secrets.registry-username }}
