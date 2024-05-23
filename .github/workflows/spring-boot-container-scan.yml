@@ -93,7 +93,7 @@ jobs:
             image: ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             artifact-name: sbom-${{steps.sbom-name.outputs.SBOM_ARTIFACT_ID}}-${{env.IMAGETAG}}.spdx
         - name: Run Trivy vulnerability scanner
-          uses: aquasecurity/trivy-action@2b6a709cf9c4025c5438138008beaddbb02086f0 # pin@v0.14.0
+          uses: aquasecurity/trivy-action@fd25fed6972e341ff0007ddb61f77e88103953c2 # pin@v0.21.0
           with:
             image-ref: ${{env.IMAGE-NAME}}:${{env.IMAGETAG}}
             exit-code: '1'
