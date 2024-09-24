@@ -23,11 +23,17 @@ jobs:
       matrix:
         channel: ['${{ inputs.slack-channel-id }}', 'C05G4B8R2GG']
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
       - name: Checkout JS Tools
         uses: actions/checkout@v4
         with:
           repository: felleslosninger/eid-github-workflows
           path: tools
+
       - name: Get commit message
         id: commit-message
         uses: actions/github-script@v7
@@ -36,6 +42,7 @@ jobs:
             const Utils = require('./tools/.github/js/github-context-utils.js');
             const message = Utils.getCommitMessage(${{ toJson(github) }});
             return message;
+
       - name: Notify
         if: ${{ matrix.channel != '' }}
         id: slack
